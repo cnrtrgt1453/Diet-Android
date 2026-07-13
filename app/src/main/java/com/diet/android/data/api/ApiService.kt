@@ -1,0 +1,108 @@
+package com.diet.android.data.api
+
+import com.diet.android.data.model.*
+import okhttp3.ResponseBody
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
+
+interface ApiService {
+    @POST("api/v1/auth/login")
+    suspend fun loginWithPassword(@Body request: LoginRequest): JwtAuthResponse
+
+    @POST("api/v1/auth/google")
+    suspend fun loginWithGoogle(@Body request: TokenRequest): JwtAuthResponse
+
+    @POST("api/v1/auth/facebook")
+    suspend fun loginWithFacebook(@Body request: TokenRequest): JwtAuthResponse
+
+    @POST("api/v1/auth/forgot-password")
+    suspend fun forgotPassword(@Query("email") email: String): ResponseBody
+
+    @POST("api/v1/auth/apply-dietitian")
+    suspend fun applyDietitian(@Body request: DietitianApplicationDto): ResponseBody
+
+    @PUT("api/v1/users/profile")
+    suspend fun updateProfile(@Body request: ProfileUpdateRequest): UserInfo
+
+    @GET("api/v1/test/me")
+    suspend fun getCurrentUser(): UserInfo
+
+    // Client Dashboard
+    @GET("api/v1/diets/my/today")
+    suspend fun getTodayDiet(): DietPlan
+
+    @POST("api/v1/diets/my/{dietId}/toggle")
+    suspend fun toggleDietCompleted(@Path("dietId") dietId: Long): DietPlan
+
+    @POST("api/v1/logs/daily")
+    suspend fun saveDailyLog(@Body log: DailyLog): DailyLog
+
+    @GET("api/v1/appointments/my")
+    suspend fun getMyAppointments(): List<Appointment>
+
+    @GET("api/v1/analytics/client/{clientId}/correlation")
+    suspend fun getCorrelationAnalysis(@Path("clientId") clientId: Long): CorrelationData
+
+    @GET("api/v1/analytics/client/{clientId}/prediction")
+    suspend fun getWeightPrediction(@Path("clientId") clientId: Long): PredictionData
+
+    // Dietitian Dashboard
+    @GET("api/v1/clients/stats")
+    suspend fun getDietitianStats(): ClinicStats
+
+    @GET("api/v1/connections/pending-requests")
+    suspend fun getPendingRequests(): List<DietitianConnectionRequest>
+
+    @POST("api/v1/connections/requests/{requestId}/approve")
+    suspend fun approveConnectionRequest(@Path("requestId") requestId: Long): ResponseBody
+
+    @POST("api/v1/connections/requests/{requestId}/reject")
+    suspend fun rejectConnectionRequest(@Path("requestId") requestId: Long): ResponseBody
+
+    // Explore & Chat (Phase 5)
+    @GET("api/v1/clients")
+    suspend fun getClients(): List<UserInfo>
+
+    @GET("api/v1/clients/{clientId}/measurements")
+    suspend fun getClientMeasurements(@Path("clientId") clientId: Long): List<Measurement>
+
+    @POST("api/v1/clients/{clientId}/measurements")
+    suspend fun addClientMeasurement(
+        @Path("clientId") clientId: Long,
+        @Body measurement: Measurement
+    ): Measurement
+
+    @GET("api/v1/clients/{clientId}/diets")
+    suspend fun getClientDiets(@Path("clientId") clientId: Long): List<DietPlan>
+
+    @POST("api/v1/clients/{clientId}/diets")
+    suspend fun addClientDiet(
+        @Path("clientId") clientId: Long,
+        @Body diet: DietPlan
+    ): DietPlan
+
+    @GET("api/v1/logs/daily/client/{clientId}")
+    suspend fun getClientDailyLogs(@Path("clientId") clientId: Long): List<DailyLog>
+
+    @GET("api/v1/diet-templates")
+    suspend fun getDietTemplates(): List<DietPlanTemplate>
+
+    @POST("api/v1/diet-templates/from-plan/{planId}")
+    suspend fun saveTemplateFromPlan(
+        @Path("planId") planId: Long,
+        @Query("title") title: String
+    ): ResponseBody
+
+    @GET("api/v1/messages/history/{otherUserId}")
+    suspend fun getChatHistory(@Path("otherUserId") otherUserId: Long): List<ChatMessage>
+
+    @POST("api/v1/messages/send/{recipientId}")
+    suspend fun sendChatMessage(
+        @Path("recipientId") recipientId: Long,
+        @Body request: MessageRequest
+    ): ChatMessage
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DietApp</string>
+    <string name="facebook_app_id">1052532350545638</string>
+    <string name="fb_login_protocol_scheme">fb1052532350545638</string>
+    <string name="facebook_client_token">PASTE_YOUR_META_CLIENT_TOKEN_HERE</string>
+</resources>
