@@ -1,0 +1,40 @@
+# Gradle files
+.gradle/
+build/
+
+# IDE files (Android Studio / IntelliJ / VS Code)
+.idea/
+.vscode/
+*.iml
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+cmake-build-*/
+
+# Local configuration file (SDK path, personal settings)
+local.properties
+
+# Built artifacts
+*.apk
+*.aar
+*.ap_
+*.aab
+bin/
+gen/
+out/
+
+# Java class files
+*.class
+
+# Log files
+*.log
+
+# Keystores & sensitive info
+*.jks
+*.keystore
+google-services.json
+
+# OS files
+.DS_Store
+Thumbs.db
