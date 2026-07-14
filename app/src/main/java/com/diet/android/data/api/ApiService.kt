@@ -105,4 +105,72 @@ interface ApiService {
         @Path("recipientId") recipientId: Long,
         @Body request: MessageRequest
     ): ChatMessage
+
+    // Dietitian Appointments & Takvim
+    @GET("api/v1/appointments/dietitian")
+    suspend fun getDietitianAppointments(@Query("status") status: String?): List<Appointment>
+
+    @POST("api/v1/appointments/{id}/status")
+    suspend fun updateAppointmentStatus(
+        @Path("id") id: Long,
+        @Query("status") status: String
+    ): ResponseBody
+
+    @GET("api/v1/appointments/availability/dietitian/{dietitianId}")
+    suspend fun getAvailableSlots(
+        @Path("dietitianId") dietitianId: Long,
+        @Query("date") date: String
+    ): List<DietitianAvailability>
+
+    @POST("api/v1/appointments/availability")
+    suspend fun createAvailabilitySlot(@Body slot: DietitianAvailability): DietitianAvailability
+
+    @POST("api/v1/appointments/book-slot/{slotId}")
+    suspend fun bookAppointmentSlot(
+        @Path("slotId") slotId: Long,
+        @Body request: BookingRequest
+    ): Appointment
+
+    // Notifications
+    @GET("api/v1/notifications")
+    suspend fun getMyNotifications(): List<AppNotification>
+
+    @GET("api/v1/notifications/unread/count")
+    suspend fun getUnreadCount(): Long
+
+    @POST("api/v1/notifications/{id}/read")
+    suspend fun markNotificationAsRead(@Path("id") id: Long): ResponseBody
+
+    @POST("api/v1/notifications/read-all")
+    suspend fun markAllNotificationsAsRead(): ResponseBody
+
+    // Admin Applications Review
+    @GET("api/v1/admin/applications")
+    suspend fun getPendingApplications(): List<DietitianApplication>
+
+    @POST("api/v1/admin/applications/{id}/start-review")
+    suspend fun startReviewApplication(@Path("id") id: Long): DietitianApplication
+
+    @POST("api/v1/admin/applications/{id}/approve")
+    suspend fun approveApplication(@Path("id") id: Long): DietitianApplication
+
+    @POST("api/v1/admin/applications/{id}/reject")
+    suspend fun rejectApplication(
+        @Path("id") id: Long,
+        @Body request: DietitianApplicationReviewDto
+    ): DietitianApplication
+
+    // Dietitian Analytics
+    @GET("api/v1/analytics/dietitian/cohorts")
+    suspend fun getCohortAnalysis(): List<CohortDto>
+
+    @GET("api/v1/analytics/dietitian/compliance")
+    suspend fun getCategoryCompliance(): List<CategoryComplianceDto>
+
+    @GET("api/v1/analytics/dietitian/rates")
+    suspend fun getClientWeightLossRates(): List<ClientWeightLossRateDto>
+
+    // FCM token
+    @POST("api/v1/users/fcm-token")
+    suspend fun updateFcmToken(@Body request: Map<String, String>): ResponseBody
 }

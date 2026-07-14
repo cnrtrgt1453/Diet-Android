@@ -47,7 +47,9 @@ data class UserInfo(
     val linkedinUrl: String?,
     val youtubeUrl: String?,
     val profilePictureUrl: String?,
-    val fcmToken: String?
+    val fcmToken: String?,
+    val startingWeight: Double? = null,
+    val dietitian: UserInfo? = null
 )
 
 data class ProfileUpdateRequest(
@@ -64,5 +66,6 @@ data class ProfileUpdateRequest(
     val instagramUrl: String? = null,
     val linkedinUrl: String? = null,
     val youtubeUrl: String? = null,
-    val notes: String? = null
+    val notes: String? = null,
+    val profilePictureUrl: String? = null
 )

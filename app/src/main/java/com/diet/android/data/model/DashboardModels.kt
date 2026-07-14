@@ -1,5 +1,7 @@
 package com.diet.android.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class DietPlan(
     val id: Long,
     val title: String?,
@@ -121,3 +123,65 @@ data class ChatMessage(
 data class MessageRequest(
     val content: String
 )
+
+data class DietitianAvailability(
+    val id: Long? = null,
+    val date: String,
+    val startTime: String,
+    val endTime: String,
+    val isBooked: Boolean = false
+)
+
+data class BookingRequest(
+    val note: String?
+)
+
+data class AppNotification(
+    val id: Long,
+    val title: String,
+    val message: String,
+    @SerializedName("read") val isRead: Boolean,
+    val createdAt: String
+)
+
+data class DietitianApplication(
+    val id: Long,
+    val user: UserInfo,
+    val fullName: String,
+    val email: String,
+    val university: String?,
+    val diplomaNumber: String?,
+    val experienceYears: Int?,
+    val documentUrl: String?,
+    val note: String?,
+    val status: String, // PENDING, UNDER_REVIEW, APPROVED, REJECTED
+    val rejectionReason: String?,
+    val createdAt: String?
+)
+
+data class DietitianApplicationReviewDto(
+    val rejectionReason: String
+)
+
+data class CohortDto(
+    val cohortMonth: String,
+    val totalClients: Long,
+    val averageStartingWeight: Double,
+    val averageCurrentWeight: Double,
+    val averageWeightLoss: Double
+)
+
+data class CategoryComplianceDto(
+    val category: String,
+    val complianceRate: Double
+)
+
+data class ClientWeightLossRateDto(
+    val clientName: String,
+    val category: String,
+    val startingWeight: Double,
+    val currentWeight: Double,
+    val weightLossRateKgPerWeek: Double,
+    val daysTracked: Long
+)
+
