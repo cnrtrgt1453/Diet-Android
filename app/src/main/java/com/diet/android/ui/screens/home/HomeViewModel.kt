@@ -44,6 +44,8 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
         private set
     var dietitianAppointments by mutableStateOf<List<Appointment>>(emptyList())
         private set
+    var dietitianSlots by mutableStateOf<List<DietitianAvailability>>(emptyList())
+        private set
 
     // New states for migrated dialogs
     var notifications by mutableStateOf<List<AppNotification>>(emptyList())
@@ -84,6 +86,7 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
                     dietitianStats = apiService.getDietitianStats()
                     connectionRequests = apiService.getPendingRequests()
                     dietitianAppointments = apiService.getDietitianAppointments(null)
+                    loadDietitianSlots()
                     loadClinicAnalytics()
                     if (user.email == "suhedaterat2@gmail.com") {
                         loadAdminApplications()
@@ -296,8 +299,31 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
             try {
                 apiService.createAvailabilitySlot(DietitianAvailability(date = date, startTime = startTime, endTime = endTime))
                 _uiEvent.emit(HomeUiEvent.ShowMessage("Müsaitlik slotu başarıyla eklendi!"))
+                loadDietitianSlots()
             } catch (e: Exception) {
                 _uiEvent.emit(HomeUiEvent.Error("Slot eklenemedi: ${e.localizedMessage}"))
+            }
+        }
+    }
+
+    fun loadDietitianSlots() {
+        viewModelScope.launch {
+            try {
+                dietitianSlots = apiService.getMySlots()
+            } catch (e: Exception) {
+                // Mute error or print stack trace
+            }
+        }
+    }
+
+    fun deleteAvailabilitySlot(slotId: Long) {
+        viewModelScope.launch {
+            try {
+                apiService.deleteAvailabilitySlot(slotId)
+                _uiEvent.emit(HomeUiEvent.ShowMessage("Müsaitlik slotu silindi!"))
+                loadDietitianSlots()
+            } catch (e: Exception) {
+                _uiEvent.emit(HomeUiEvent.Error("Slot silinemedi: ${e.localizedMessage}"))
             }
         }
     }

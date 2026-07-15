@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.DELETE
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -124,6 +125,12 @@ interface ApiService {
 
     @POST("api/v1/appointments/availability")
     suspend fun createAvailabilitySlot(@Body slot: DietitianAvailability): DietitianAvailability
+
+    @GET("api/v1/appointments/availability/my-slots")
+    suspend fun getMySlots(): List<DietitianAvailability>
+
+    @DELETE("api/v1/appointments/availability/{slotId}")
+    suspend fun deleteAvailabilitySlot(@Path("slotId") slotId: Long): okhttp3.ResponseBody
 
     @POST("api/v1/appointments/book-slot/{slotId}")
     suspend fun bookAppointmentSlot(

@@ -203,6 +203,50 @@ fun DietitianDashboard(
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("🕒 Müsaitlik Saatleriniz (${viewModel.dietitianSlots.size})", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
+        if (viewModel.dietitianSlots.isNotEmpty()) {
+            viewModel.dietitianSlots.forEach { slot ->
+                ElevatedCard(
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(14.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text("🗓 Tarih: ${slot.date}", fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                            Text("⏰ Saat: ${slot.startTime} - ${slot.endTime}", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                        }
+                        IconButton(
+                            onClick = { viewModel.deleteAvailabilitySlot(slot.id ?: 0L) }
+                        ) {
+                            Text("🗑️", fontSize = 18.sp)
+                        }
+                    }
+                }
+            }
+        } else {
+            ElevatedCard(
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            ) {
+                Text(
+                    "Henüz boş müsaitlik saati eklemediniz.",
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(40.dp))
     }
 }
