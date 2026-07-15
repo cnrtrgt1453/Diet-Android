@@ -106,7 +106,7 @@ fun HomeScreen(
                         }
                     }
 
-                    if (userInfo?.role == "ROLE_ADMIN") {
+                    if (userInfo?.role == "ROLE_ADMIN" || userInfo?.email == "suhedaterat2@gmail.com") {
                         IconButton(onClick = { showApplicationsDialog = true }) {
                             Text("⚙️", fontSize = 18.sp)
                         }

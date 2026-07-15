@@ -85,6 +85,9 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
                     connectionRequests = apiService.getPendingRequests()
                     dietitianAppointments = apiService.getDietitianAppointments(null)
                     loadClinicAnalytics()
+                    if (user.email == "suhedaterat2@gmail.com") {
+                        loadAdminApplications()
+                    }
                 } else if (user.role == "ROLE_USER") {
                     try {
                         todayDiet = apiService.getTodayDiet()
