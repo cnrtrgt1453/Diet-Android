@@ -18,6 +18,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.diet.android.ui.screens.home.HomeViewModel
 import com.diet.android.ui.theme.*
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,19 +68,61 @@ fun AppointmentDialog(
                     var slotDate by remember { mutableStateOf("") }
                     var slotStartTime by remember { mutableStateOf("") }
                     var slotEndTime by remember { mutableStateOf("") }
+                    var showDatePicker by remember { mutableStateOf(false) }
 
-                    OutlinedTextField(
-                        value = slotDate,
-                        onValueChange = { slotDate = it },
-                        label = { Text("Tarih (YYYY-MM-DD)") },
-                        placeholder = { Text("örn: 2026-07-15") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { showDatePicker = true }
+                    ) {
+                        OutlinedTextField(
+                            value = slotDate,
+                            onValueChange = {},
+                            label = { Text("Tarih (YYYY-MM-DD)") },
+                            placeholder = { Text("Tarih seçmek için tıklayın") },
+                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = true,
+                            enabled = false,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                disabledTextColor = TextDark,
+                                disabledBorderColor = Color.LightGray,
+                                disabledLabelColor = TextSecondaryDark,
+                                disabledPlaceholderColor = TextSecondaryDark
+                            )
+                        )
+                    }
+
+                    if (showDatePicker) {
+                        val datePickerState = rememberDatePickerState()
+                        DatePickerDialog(
+                            onDismissRequest = { showDatePicker = false },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        datePickerState.selectedDateMillis?.let { millis ->
+                                            val localDate = Instant.ofEpochMilli(millis).atZone(ZoneId.of("UTC")).toLocalDate()
+                                            slotDate = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                                        }
+                                        showDatePicker = false
+                                    }
+                                ) {
+                                    Text("Seç", color = GreenPrimary)
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showDatePicker = false }) {
+                                    Text("İptal", color = TextSecondaryDark)
+                                }
+                            }
+                        ) {
+                            DatePicker(state = datePickerState)
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = slotStartTime,
-                        onValueChange = { slotStartTime = it },
+                        onValueChange = { slotStartTime = formatTimeInput(it, slotStartTime) },
                         label = { Text("Başlangıç Saati (SS:DD)") },
                         placeholder = { Text("örn: 09:00") },
                         modifier = Modifier.fillMaxWidth(),
@@ -86,7 +131,7 @@ fun AppointmentDialog(
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = slotEndTime,
-                        onValueChange = { slotEndTime = it },
+                        onValueChange = { slotEndTime = formatTimeInput(it, slotEndTime) },
                         label = { Text("Bitiş Saati (SS:DD)") },
                         placeholder = { Text("örn: 10:00") },
                         modifier = Modifier.fillMaxWidth(),
@@ -113,20 +158,60 @@ fun AppointmentDialog(
                     var appNote by remember { mutableStateOf("") }
                     var selectedSlotId by remember { mutableStateOf<Long?>(null) }
                     val dietitianId = viewModel.userInfo?.dietitian?.id
+                    var showAppDatePicker by remember { mutableStateOf(false) }
 
-                    OutlinedTextField(
-                        value = appDate,
-                        onValueChange = {
-                            appDate = it
-                            if (it.length == 10 && dietitianId != null) {
-                                viewModel.fetchAvailableSlots(dietitianId, it)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { showAppDatePicker = true }
+                    ) {
+                        OutlinedTextField(
+                            value = appDate,
+                            onValueChange = {},
+                            label = { Text("Tarih Seçin (YYYY-MM-DD)") },
+                            placeholder = { Text("Tarih seçmek için tıklayın") },
+                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = true,
+                            enabled = false,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                disabledTextColor = TextDark,
+                                disabledBorderColor = Color.LightGray,
+                                disabledLabelColor = TextSecondaryDark,
+                                disabledPlaceholderColor = TextSecondaryDark
+                            )
+                        )
+                    }
+
+                    if (showAppDatePicker) {
+                        val datePickerState = rememberDatePickerState()
+                        DatePickerDialog(
+                            onDismissRequest = { showAppDatePicker = false },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        datePickerState.selectedDateMillis?.let { millis ->
+                                            val localDate = Instant.ofEpochMilli(millis).atZone(ZoneId.of("UTC")).toLocalDate()
+                                            val formatted = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                                            appDate = formatted
+                                            if (dietitianId != null) {
+                                                viewModel.fetchAvailableSlots(dietitianId, formatted)
+                                            }
+                                        }
+                                        showAppDatePicker = false
+                                    }
+                                ) {
+                                    Text("Seç", color = GreenPrimary)
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showAppDatePicker = false }) {
+                                    Text("İptal", color = TextSecondaryDark)
+                                }
                             }
-                        },
-                        label = { Text("Tarih Seçin (YYYY-MM-DD)") },
-                        placeholder = { Text("örn: 2026-07-15") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
+                        ) {
+                            DatePicker(state = datePickerState)
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -257,4 +342,44 @@ fun FlowRow(
             }
         }
     }
+}
+
+fun formatTimeInput(input: String, previous: String): String {
+    // If user is deleting (new input is shorter than previous)
+    if (input.length < previous.length) {
+        // If deleting the colon, delete the character before it as well
+        if (previous.endsWith(":") && !input.contains(":")) {
+            val clean = input.filter { it.isDigit() }
+            return if (clean.isNotEmpty()) clean.dropLast(1) else ""
+        }
+        return input
+    }
+    
+    // Only allow digits
+    val clean = input.filter { it.isDigit() }
+    if (clean.isEmpty()) return ""
+    
+    // Hour part
+    val hourPart = if (clean.length >= 2) clean.substring(0, 2) else clean
+    val hourVal = hourPart.toIntOrNull() ?: 0
+    val formattedHour = if (hourVal > 23) {
+        "00"
+    } else {
+        hourPart
+    }
+    
+    if (clean.length <= 2) {
+        return if (clean.length == 2) "$formattedHour:" else formattedHour
+    }
+    
+    // Minute part
+    val minPart = if (clean.length >= 4) clean.substring(2, 4) else clean.substring(2)
+    val minVal = minPart.toIntOrNull() ?: 0
+    val formattedMin = if (minVal > 59) {
+        "00"
+    } else {
+        minPart
+    }
+    
+    return "$formattedHour:$formattedMin"
 }
