@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.sp
 import com.diet.android.ui.screens.home.components.*
 import com.diet.android.ui.theme.*
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,13 +74,13 @@ fun HomeScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { showProfileEditDialog = true }) {
-                        Text("👤", fontSize = 18.sp)
-                    }
-
                     IconButton(onClick = { showNotificationDialog = true }) {
                         Box(contentAlignment = Alignment.TopEnd) {
-                            Text("🔔", fontSize = 18.sp)
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Bildirimler",
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
                             if (viewModel.unreadCount > 0) {
                                 Box(
                                     modifier = Modifier
@@ -97,23 +99,7 @@ fun HomeScreen(
                         }
                     }
 
-                    IconButton(onClick = { showAppointmentDialog = true }) {
-                        Text("📅", fontSize = 18.sp)
-                    }
-
-                    if (userInfo?.role == "ROLE_DIETITIAN") {
-                        IconButton(onClick = { showClinicAnalyticsDialog = true }) {
-                            Text("📊", fontSize = 18.sp)
-                        }
-                    }
-
-                    if (userInfo?.role == "ROLE_ADMIN" || userInfo?.email == "suhedaterat2@gmail.com") {
-                        IconButton(onClick = { showApplicationsDialog = true }) {
-                            Text("⚙️", fontSize = 18.sp)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
 
                     TextButton(onClick = onLogout) {
                         Text("Çıkış Yap", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
@@ -131,17 +117,67 @@ fun HomeScreen(
                 containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 8.dp
             ) {
+                // Ana Sayfa (Tüm roller için ortak)
                 NavigationBarItem(
-                    icon = { Text("🏠", fontSize = 20.sp) },
+                    icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
                     label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
                     selected = true,
                     onClick = {}
                 )
+
+                if (userInfo?.role == "ROLE_DIETITIAN") {
+                    // Danışanlar
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.People, contentDescription = "Danışanlar") },
+                        label = { Text("Danışanlar", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToExplore
+                    )
+                    // Çalışma Slotu Ekle
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.DateRange, contentDescription = "Slot Ekle") },
+                        label = { Text("Slot Ekle", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { showAppointmentDialog = true }
+                    )
+                    // Klinik Analitiği
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Analytics, contentDescription = "Analizler") },
+                        label = { Text("Analizler", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { showClinicAnalyticsDialog = true }
+                    )
+                } else if (userInfo?.role == "ROLE_USER") {
+                    // Geçmişim
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.History, contentDescription = "Geçmişim") },
+                        label = { Text("Geçmişim", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToExplore
+                    )
+                    // Randevu Al
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.AddCircle, contentDescription = "Randevu Al") },
+                        label = { Text("Randevu Al", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { showAppointmentDialog = true }
+                    )
+                } else if (userInfo?.role == "ROLE_ADMIN" || userInfo?.email == "suhedaterat2@gmail.com") {
+                    // Başvurular (Admin için)
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Settings, contentDescription = "Başvurular") },
+                        label = { Text("Başvurular", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { showApplicationsDialog = true }
+                    )
+                }
+
+                // Profil (Tüm roller için ortak)
                 NavigationBarItem(
-                    icon = { Text("🔍", fontSize = 20.sp) },
-                    label = { Text(if (userInfo?.role == "ROLE_DIETITIAN") "Danışanlar" else "Geçmişim", fontWeight = FontWeight.Medium) },
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Profil") },
+                    label = { Text("Profil", fontWeight = FontWeight.Medium) },
                     selected = false,
-                    onClick = onNavigateToExplore
+                    onClick = { showProfileEditDialog = true }
                 )
             }
         }
