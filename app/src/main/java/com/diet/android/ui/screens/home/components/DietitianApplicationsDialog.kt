@@ -40,11 +40,11 @@ fun DietitianApplicationsDialog(
             Column(
                 modifier = Modifier
                     .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
+                    .fillMaxHeight()
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -53,98 +53,117 @@ fun DietitianApplicationsDialog(
                         fontSize = 18.sp,
                         color = TextDark
                     )
-                    TextButton(onClick = onClose) {
-                        Text("Kapat", color = GreenPrimary)
-                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                val apps = viewModel.dietitianApplications
-                if (apps.isEmpty()) {
-                    Text(
-                        text = "Aktif/Bekleyen başvuru bulunmamaktadır.",
-                        fontSize = 13.sp,
-                        color = TextSecondaryDark,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
-                    )
-                } else {
-                    apps.forEach { app ->
-                        Card(
-                            shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F7F6)),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = app.fullName,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = TextDark
-                                    )
-                                    val statusColor = when (app.status) {
-                                        "UNDER_REVIEW" -> Color(0xFFEF6C00)
-                                        else -> Color(0xFF2E7D32)
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    val apps = viewModel.dietitianApplications
+                    if (apps.isEmpty()) {
+                        Text(
+                            text = "Aktif/Bekleyen başvuru bulunmamaktadır.",
+                            fontSize = 13.sp,
+                            color = TextSecondaryDark,
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
+                        )
+                    } else {
+                        apps.forEach { app ->
+                            Card(
+                                shape = RoundedCornerShape(12.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F7F6)),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 6.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = app.fullName,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sp,
+                                            color = TextDark
+                                        )
+                                        val statusColor = when (app.status) {
+                                            "UNDER_REVIEW" -> Color(0xFFEF6C00)
+                                            else -> Color(0xFF2E7D32)
+                                        }
+                                        Text(
+                                            text = if (app.status == "UNDER_REVIEW") "İnceleniyor" else "Bekliyor",
+                                            color = statusColor,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 11.sp
+                                        )
                                     }
-                                    Text(
-                                        text = if (app.status == "UNDER_REVIEW") "İnceleniyor" else "Bekliyor",
-                                        color = statusColor,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 11.sp
-                                    )
-                                }
 
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Text("📧 E-posta: ${app.email}", fontSize = 11.sp, color = TextSecondaryDark)
-                                Text("🎓 Üniversite: ${app.university ?: "-"}", fontSize = 11.sp, color = TextSecondaryDark)
-                                Text("📜 Diploma No: ${app.diplomaNumber ?: "-"}", fontSize = 11.sp, color = TextSecondaryDark)
-                                Text("💼 Deneyim: ${app.experienceYears ?: 0} Yıl", fontSize = 11.sp, color = TextSecondaryDark)
-                                app.note?.let {
-                                    Text("📝 Not: \"$it\"", fontSize = 11.sp, color = TextSecondaryDark)
-                                }
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text("📧 E-posta: ${app.email}", fontSize = 11.sp, color = TextSecondaryDark)
+                                    Text("🎓 Üniversite: ${app.university ?: "-"}", fontSize = 11.sp, color = TextSecondaryDark)
+                                    Text("📜 Diploma No: ${app.diplomaNumber ?: "-"}", fontSize = 11.sp, color = TextSecondaryDark)
+                                    Text("💼 Deneyim: ${app.experienceYears ?: 0} Yıl", fontSize = 11.sp, color = TextSecondaryDark)
+                                    app.note?.let {
+                                        Text("📝 Not: \"$it\"", fontSize = 11.sp, color = TextSecondaryDark)
+                                    }
 
-                                Spacer(modifier = Modifier.height(12.dp))
+                                    Spacer(modifier = Modifier.height(12.dp))
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.End
-                                ) {
-                                    if (app.status == "PENDING") {
-                                        Button(
-                                            onClick = { viewModel.startReviewApplication(app.id) },
-                                            colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-                                            shape = RoundedCornerShape(6.dp)
-                                        ) {
-                                            Text("🔍 İncelemeyi Başlat", color = Color.White, fontSize = 12.sp)
-                                        }
-                                    } else if (app.status == "UNDER_REVIEW") {
-                                        Button(
-                                            onClick = { viewModel.approveApplication(app.id) },
-                                            colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-                                            shape = RoundedCornerShape(6.dp)
-                                        ) {
-                                            Text("✔️ Onayla", color = Color.White, fontSize = 12.sp)
-                                        }
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Button(
-                                            onClick = { rejectTargetId = app.id },
-                                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
-                                            shape = RoundedCornerShape(6.dp)
-                                        ) {
-                                            Text("❌ Reddet", color = Color.White, fontSize = 12.sp)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
+                                        if (app.status == "PENDING") {
+                                            Button(
+                                                onClick = { viewModel.startReviewApplication(app.id) },
+                                                colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
+                                                shape = RoundedCornerShape(6.dp)
+                                            ) {
+                                                Text("🔍 İncelemeyi Başlat", color = Color.White, fontSize = 12.sp)
+                                            }
+                                        } else if (app.status == "UNDER_REVIEW") {
+                                            Button(
+                                                onClick = { viewModel.approveApplication(app.id) },
+                                                colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
+                                                shape = RoundedCornerShape(6.dp)
+                                            ) {
+                                                Text("✔️ Onayla", color = Color.White, fontSize = 12.sp)
+                                            }
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Button(
+                                                onClick = { rejectTargetId = app.id },
+                                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                                                shape = RoundedCornerShape(6.dp)
+                                            ) {
+                                                Text("❌ Reddet", color = Color.White, fontSize = 12.sp)
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = onClose,
+                    colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Kapat",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color.White
+                    )
                 }
             }
         }
