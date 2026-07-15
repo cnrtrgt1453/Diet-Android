@@ -211,13 +211,14 @@ fun RoleSelectionView(
             text = "Lütfen giriş yapmak için rolünüzü seçin:",
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
-            color = TextDark,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
-        Card(
+        ElevatedCard(
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = GreenPrimary),
+            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onSelectDietitian() }
@@ -234,22 +235,23 @@ fun RoleSelectionView(
                 Column {
                     Text(
                         "Diyetisyen Girişi / Başvurusu",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 16.sp
                     )
                     Text(
                         "E-posta ve şifre ile giriş yapın veya sisteme katılmak için başvurun.",
-                        color = Color.White.copy(alpha = 0.8f),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                         fontSize = 12.sp
                     )
                 }
             }
         }
 
-        Card(
+        ElevatedCard(
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1877F2)),
+            colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onSelectClient() }
@@ -266,13 +268,13 @@ fun RoleSelectionView(
                 Column {
                     Text(
                         "Danışan Girişi",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 16.sp
                     )
                     Text(
                         "Google veya Facebook hesabınızla hızlıca giriş yapın.",
-                        color = Color.White.copy(alpha = 0.8f),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                         fontSize = 12.sp
                     )
                 }

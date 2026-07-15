@@ -30,7 +30,7 @@ fun DietitianDashboard(
     val approvedApps = appointments.filter { it.status == "APPROVED" }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        Text("Klinik İstatistikleri", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TextDark, modifier = Modifier.padding(vertical = 8.dp))
+        Text("Klinik İstatistikleri", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.padding(vertical = 8.dp))
 
         Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
             StatCard(emoji = "👥", label = "Toplam Danışan", value = "${stats.total}", modifier = Modifier.weight(1f))
@@ -45,7 +45,7 @@ fun DietitianDashboard(
 
         if (requests.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
-            Text("👥 Danışan Çalışma Talepleri (${requests.size})", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TextDark)
+            Text("👥 Danışan Çalışma Talepleri (${requests.size})", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.height(8.dp))
             
             LazyRow(
@@ -53,18 +53,19 @@ fun DietitianDashboard(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(requests) { req ->
-                    Card(
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                    OutlinedCard(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.outlinedCardElevation(defaultElevation = 2.dp),
                         modifier = Modifier.width(260.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color.LightGray)
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                     ) {
                         Column(modifier = Modifier.padding(14.dp)) {
-                            Text(req.client.name ?: "Bilinmeyen Danışan", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = TextDark)
+                            Text(req.client.name ?: "Bilinmeyen Danışan", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
                             Text(
                                 "Boy: ${req.client.height ?: "-"} cm | Kilo: ${req.client.currentWeight ?: "-"} kg",
                                 fontSize = 11.sp,
-                                color = TextSecondaryDark
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             val catLabel = when (req.client.category) {
                                 "GLP_1" -> "GLP-1 Destekli"
@@ -72,27 +73,27 @@ fun DietitianDashboard(
                                 "HORMONAL_BALANCE" -> "Hormonal Denge"
                                 else -> "Kilo Yönetimi"
                             }
-                            Text("Kategori: $catLabel", fontSize = 11.sp, color = TextSecondaryDark)
+                            Text("Kategori: $catLabel", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Spacer(modifier = Modifier.height(12.dp))
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Button(
                                     onClick = { viewModel.approveRequest(req.id) },
-                                    colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                                     modifier = Modifier.weight(1f).height(36.dp),
                                     contentPadding = PaddingValues(0.dp),
-                                    shape = RoundedCornerShape(6.dp)
+                                    shape = RoundedCornerShape(8.dp)
                                 ) {
-                                    Text("Kabul Et", color = Color.White, fontSize = 12.sp)
+                                    Text("Kabul Et", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                                 }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 OutlinedButton(
                                     onClick = { viewModel.rejectRequest(req.id) },
                                     modifier = Modifier.weight(1f).height(36.dp),
                                     contentPadding = PaddingValues(0.dp),
-                                    shape = RoundedCornerShape(6.dp),
-                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
                                 ) {
-                                    Text("Reddet", fontSize = 12.sp)
+                                    Text("Reddet", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                                 }
                             }
                         }
@@ -102,17 +103,18 @@ fun DietitianDashboard(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("📅 Bekleyen Randevu Talepleri (${pendingApps.size})", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TextDark)
+        Text("📅 Bekleyen Randevu Talepleri (${pendingApps.size})", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
         if (pendingApps.isNotEmpty()) {
             pendingApps.forEach { app ->
-                Card(
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                ElevatedCard(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                 ) {
                     Column(modifier = Modifier.padding(14.dp)) {
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(app.client.name ?: "Danışan", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = TextDark)
+                            Text(app.client.name ?: "Danışan", fontWeight = FontWeight.SemiBold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
                             Text(
                                 when (app.client.category) {
                                     "GLP_1" -> "GLP-1"
@@ -120,58 +122,60 @@ fun DietitianDashboard(
                                     "HORMONAL_BALANCE" -> "Hormon"
                                     else -> "Kilo"
                                 },
-                                fontSize = 10.sp, color = GreenPrimary, fontWeight = FontWeight.Bold
+                                fontSize = 10.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold
                             )
                         }
-                        Text("🗓 Tarih: ${app.appointmentDate} | Saat: ${app.appointmentTime}", fontSize = 12.sp, color = TextDark)
+                        Text("🗓 Tarih: ${app.appointmentDate} | Saat: ${app.appointmentTime}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
                         if (!app.note.isNullOrBlank()) {
-                            Text("Not: \"${app.note}\"", fontSize = 11.sp, color = TextSecondaryDark)
+                            Text("Not: \"${app.note}\"", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Button(
                                 onClick = { viewModel.updateAppointmentStatus(app.id, "APPROVED") },
-                                colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                                 modifier = Modifier.weight(1f).height(36.dp),
-                                shape = RoundedCornerShape(6.dp)
+                                shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text("Onayla", color = Color.White, fontSize = 12.sp)
+                                Text("Onayla", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             OutlinedButton(
                                 onClick = { viewModel.updateAppointmentStatus(app.id, "REJECTED") },
                                 modifier = Modifier.weight(1f).height(36.dp),
-                                shape = RoundedCornerShape(6.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
+                                shape = RoundedCornerShape(8.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
                             ) {
-                                Text("Reddet", fontSize = 12.sp)
+                                Text("Reddet", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                             }
                         }
                     }
                 }
             }
         } else {
-            Card(
+            ElevatedCard(
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
             ) {
                 Text(
                     "🎉 Bekleyen randevu talebi bulunmuyor.",
                     fontSize = 13.sp,
-                    color = TextSecondaryDark,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp)
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("🗓 Yaklaşan Seanslar (${approvedApps.size})", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TextDark)
+        Text("🗓 Yaklaşan Seanslar (${approvedApps.size})", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
         if (approvedApps.isNotEmpty()) {
             approvedApps.forEach { app ->
-                Card(
+                ElevatedCard(
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                 ) {
                     Row(
@@ -179,21 +183,22 @@ fun DietitianDashboard(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(app.client.name ?: "Danışan", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = TextDark)
-                        Text("${app.appointmentDate} | ${app.appointmentTime}", fontSize = 12.sp, color = GreenPrimary, fontWeight = FontWeight.Bold)
+                        Text(app.client.name ?: "Danışan", fontWeight = FontWeight.SemiBold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                        Text("${app.appointmentDate} | ${app.appointmentTime}", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                     }
                 }
             }
         } else {
-            Card(
+            ElevatedCard(
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
             ) {
                 Text(
                     "Bu haftaya planlanmış seans bulunmuyor.",
                     fontSize = 13.sp,
-                    color = TextSecondaryDark,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -209,16 +214,17 @@ fun StatCard(
     value: String,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+    ElevatedCard(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
         modifier = modifier
     ) {
         Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(emoji, fontSize = 24.sp)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(value, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = TextDark)
-            Text(label, fontSize = 11.sp, color = TextSecondaryDark)
+            Text(value, fontWeight = FontWeight.SemiBold, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
+            Text(label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

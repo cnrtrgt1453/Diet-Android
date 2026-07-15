@@ -60,13 +60,14 @@ fun HomeScreen(
                         Text(
                             text = "DietApp Platformu",
                             fontSize = 11.sp,
-                            color = Color.White.copy(alpha = 0.8f)
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                         Text(
                             text = if (userInfo?.role == "ROLE_DIETITIAN") "Hoş geldiniz, ${userInfo.name ?: "Uzman"}" else "Merhaba, ${userInfo?.name ?: "Danışan"}",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 },
@@ -81,14 +82,14 @@ fun HomeScreen(
                             if (viewModel.unreadCount > 0) {
                                 Box(
                                     modifier = Modifier
-                                        .size(14.dp)
-                                        .background(Color.Red, RoundedCornerShape(7.dp)),
+                                        .size(16.dp)
+                                        .background(MaterialTheme.colorScheme.error, RoundedCornerShape(8.dp)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = viewModel.unreadCount.toString(),
-                                        color = Color.White,
-                                        fontSize = 8.sp,
+                                        color = MaterialTheme.colorScheme.onError,
+                                        fontSize = 9.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
@@ -115,23 +116,30 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.width(8.dp))
 
                     TextButton(onClick = onLogout) {
-                        Text("Çıkış Yap", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text("Çıkış Yap", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = GreenPrimary)
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
+                )
             )
         },
         bottomBar = {
-            NavigationBar(containerColor = Color.White) {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 8.dp
+            ) {
                 NavigationBarItem(
                     icon = { Text("🏠", fontSize = 20.sp) },
-                    label = { Text("Ana Sayfa") },
+                    label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
                     selected = true,
                     onClick = {}
                 )
                 NavigationBarItem(
                     icon = { Text("🔍", fontSize = 20.sp) },
-                    label = { Text(if (userInfo?.role == "ROLE_DIETITIAN") "Danışanlar" else "Geçmişim") },
+                    label = { Text(if (userInfo?.role == "ROLE_DIETITIAN") "Danışanlar" else "Geçmişim", fontWeight = FontWeight.Medium) },
                     selected = false,
                     onClick = onNavigateToExplore
                 )

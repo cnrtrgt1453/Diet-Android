@@ -68,21 +68,27 @@ fun ExploreScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (isDietitian) "Danışan Rehberi" else "Takip Geçmişiniz", color = Color.White, fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = GreenPrimary)
+                title = { Text(if (isDietitian) "Danışan Rehberi" else "Takip Geçmişiniz", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold, fontSize = 18.sp) },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                )
             )
         },
         bottomBar = {
-            NavigationBar(containerColor = Color.White) {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 8.dp
+            ) {
                 NavigationBarItem(
                     icon = { Text("🏠", fontSize = 20.sp) },
-                    label = { Text("Ana Sayfa") },
+                    label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
                     selected = false,
                     onClick = onNavigateToHome
                 )
                 NavigationBarItem(
                     icon = { Text("🔍", fontSize = 20.sp) },
-                    label = { Text(if (isDietitian) "Danışanlar" else "Geçmişim") },
+                    label = { Text(if (isDietitian) "Danışanlar" else "Geçmişim", fontWeight = FontWeight.Medium) },
                     selected = true,
                     onClick = {}
                 )
