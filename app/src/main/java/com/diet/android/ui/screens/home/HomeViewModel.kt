@@ -309,7 +309,49 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
     fun loadDietitianSlots() {
         viewModelScope.launch {
             try {
-                dietitianSlots = apiService.getMySlots()
+                val slots = apiService.getMySlots()
+                val today = java.time.LocalDate.now()
+                val nowTime = java.time.LocalTime.now()
+                
+                val expiredSlots = mutableListOf<DietitianAvailability>()
+                val activeSlots = mutableListOf<DietitianAvailability>()
+                
+                for (slot in slots) {
+                    var isExpired = false
+                    try {
+                        val slotDate = java.time.LocalDate.parse(slot.date)
+                        if (slotDate.isBefore(today)) {
+                            isExpired = true
+                        } else if (slotDate.isEqual(today)) {
+                            val slotEndTime = java.time.LocalTime.parse(slot.endTime)
+                            if (slotEndTime.isBefore(nowTime)) {
+                                isExpired = true
+                            }
+                        }
+                    } catch (e: Exception) {
+                        // If parsing fails, keep it active to avoid accidental deletion
+                    }
+                    if (isExpired) {
+                        expiredSlots.add(slot)
+                    } else {
+                        activeSlots.add(slot)
+                    }
+                }
+                
+                dietitianSlots = activeSlots
+                
+                // Asynchronously delete expired slots on backend
+                expiredSlots.forEach { slot ->
+                    slot.id?.let { id ->
+                        launch {
+                            try {
+                                apiService.deleteAvailabilitySlot(id)
+                            } catch (e: Exception) {
+                                // Silent fail
+                            }
+                        }
+                    }
+                }
             } catch (e: Exception) {
                 // Mute error or print stack trace
             }

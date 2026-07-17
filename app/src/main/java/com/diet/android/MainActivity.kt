@@ -18,6 +18,7 @@ import com.diet.android.data.api.ApiClient
 import com.diet.android.data.api.ApiService
 import com.diet.android.data.repository.AuthRepository
 import com.diet.android.ui.screens.home.HomeScreen
+import com.diet.android.ui.screens.home.AvailabilitySlotsScreen
 import com.diet.android.ui.screens.home.HomeViewModel
 import com.diet.android.ui.screens.home.HomeViewModelFactory
 import com.diet.android.ui.screens.explore.ExploreScreen
@@ -176,6 +177,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                         navController.navigate("explore") {
                             launchSingleTop = true
                         }
+                    },
+                    onNavigateToSlots = {
+                        navController.navigate("slots") {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -189,6 +195,31 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                         val route = if (dialog != null) "home?dialog=$dialog" else "home"
                         navController.navigate(route) {
                             popUpTo("home") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToSlots = {
+                        navController.navigate("slots") {
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+            composable("slots") {
+                val homeViewModel: HomeViewModel = viewModel(
+                    factory = HomeViewModelFactory(apiService)
+                )
+                AvailabilitySlotsScreen(
+                    viewModel = homeViewModel,
+                    onNavigateToHome = { dialog ->
+                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                        navController.navigate(route) {
+                            popUpTo("home") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToExplore = {
+                        navController.navigate("explore") {
                             launchSingleTop = true
                         }
                     }

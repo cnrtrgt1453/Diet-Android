@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.*
 fun HomeScreen(
     onLogout: () -> Unit,
     onNavigateToExplore: () -> Unit,
+    onNavigateToSlots: () -> Unit,
     viewModel: HomeViewModel,
     initialDialog: String? = null
 ) {
@@ -148,7 +149,7 @@ fun HomeScreen(
                         icon = { Icon(Icons.Default.DateRange, contentDescription = "Slot Ekle") },
                         label = { Text("Slot Ekle", fontWeight = FontWeight.Medium) },
                         selected = false,
-                        onClick = { showAppointmentDialog = true }
+                        onClick = onNavigateToSlots
                     )
                     // Klinik Analitiği
                     NavigationBarItem(

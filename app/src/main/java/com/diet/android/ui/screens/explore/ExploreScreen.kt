@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.*
 @Composable
 fun ExploreScreen(
     onNavigateToHome: (String?) -> Unit,
+    onNavigateToSlots: () -> Unit,
     viewModel: ExploreViewModel
 ) {
     val context = LocalContext.current
@@ -103,7 +104,7 @@ fun ExploreScreen(
                         icon = { Icon(Icons.Default.DateRange, contentDescription = "Slot Ekle") },
                         label = { Text("Slot Ekle", fontWeight = FontWeight.Medium) },
                         selected = false,
-                        onClick = { onNavigateToHome("appointment") }
+                        onClick = onNavigateToSlots
                     )
                     // Klinik Analitiği
                     NavigationBarItem(
