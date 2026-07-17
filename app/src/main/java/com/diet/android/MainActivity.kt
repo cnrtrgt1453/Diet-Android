@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.diet.android.data.api.ApiClient
 import com.diet.android.data.api.ApiService
 import com.diet.android.data.repository.AuthRepository
@@ -147,12 +149,23 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                     }
                 )
             }
-            composable("home") {
+            composable(
+                route = "home?dialog={dialog}",
+                arguments = listOf(
+                    navArgument("dialog") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
+                )
+            ) { backStackEntry ->
+                val dialog = backStackEntry.arguments?.getString("dialog")
                 val homeViewModel: HomeViewModel = viewModel(
                     factory = HomeViewModelFactory(apiService)
                 )
                 HomeScreen(
                     viewModel = homeViewModel,
+                    initialDialog = dialog,
                     onLogout = {
                         ApiClient.clearToken(navController.context)
                         navController.navigate("login") {
@@ -172,8 +185,10 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 )
                 ExploreScreen(
                     viewModel = exploreViewModel,
-                    onNavigateToHome = {
-                        navController.navigate("home") {
+                    onNavigateToHome = { dialog ->
+                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                        navController.navigate(route) {
+                            popUpTo("home") { inclusive = false }
                             launchSingleTop = true
                         }
                     }

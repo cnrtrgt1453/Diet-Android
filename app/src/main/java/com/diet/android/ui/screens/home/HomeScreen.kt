@@ -26,7 +26,8 @@ import androidx.compose.material.icons.filled.*
 fun HomeScreen(
     onLogout: () -> Unit,
     onNavigateToExplore: () -> Unit,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    initialDialog: String? = null
 ) {
     val context = LocalContext.current
     val userInfo = viewModel.userInfo
@@ -36,6 +37,15 @@ fun HomeScreen(
     var showApplicationsDialog by remember { mutableStateOf(false) }
     var showNotificationDialog by remember { mutableStateOf(false) }
     var showProfileEditDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(initialDialog) {
+        when (initialDialog) {
+            "appointment" -> showAppointmentDialog = true
+            "analytics" -> showClinicAnalyticsDialog = true
+            "applications" -> showApplicationsDialog = true
+            "profile" -> showProfileEditDialog = true
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.loadHomeData(context)

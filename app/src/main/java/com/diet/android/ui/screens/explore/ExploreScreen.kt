@@ -24,11 +24,13 @@ import androidx.compose.ui.window.DialogProperties
 import com.diet.android.data.model.*
 import com.diet.android.ui.theme.*
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreen(
-    onNavigateToHome: () -> Unit,
+    onNavigateToHome: (String?) -> Unit,
     viewModel: ExploreViewModel
 ) {
     val context = LocalContext.current
@@ -80,17 +82,67 @@ fun ExploreScreen(
                 containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 8.dp
             ) {
+                // Ana Sayfa (Tüm roller için ortak)
                 NavigationBarItem(
-                    icon = { Text("🏠", fontSize = 20.sp) },
+                    icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
                     label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
                     selected = false,
-                    onClick = onNavigateToHome
+                    onClick = { onNavigateToHome(null) }
                 )
+
+                if (isDietitian) {
+                    // Danışanlar
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.People, contentDescription = "Danışanlar") },
+                        label = { Text("Danışanlar", fontWeight = FontWeight.Medium) },
+                        selected = true,
+                        onClick = {}
+                    )
+                    // Çalışma Slotu Ekle
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.DateRange, contentDescription = "Slot Ekle") },
+                        label = { Text("Slot Ekle", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { onNavigateToHome("appointment") }
+                    )
+                    // Klinik Analitiği
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Analytics, contentDescription = "Analizler") },
+                        label = { Text("Analizler", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { onNavigateToHome("analytics") }
+                    )
+                } else if (userInfo?.role == "ROLE_USER") {
+                    // Geçmişim
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.History, contentDescription = "Geçmişim") },
+                        label = { Text("Geçmişim", fontWeight = FontWeight.Medium) },
+                        selected = true,
+                        onClick = {}
+                    )
+                    // Randevu Al
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.AddCircle, contentDescription = "Randevu Al") },
+                        label = { Text("Randevu Al", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { onNavigateToHome("appointment") }
+                    )
+                } else if (userInfo?.role == "ROLE_ADMIN" || userInfo?.email == "suhedaterat2@gmail.com") {
+                    // Başvurular (Admin için)
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Settings, contentDescription = "Başvurular") },
+                        label = { Text("Başvurular", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { onNavigateToHome("applications") }
+                    )
+                }
+
+                // Profil (Tüm roller için ortak)
                 NavigationBarItem(
-                    icon = { Text("🔍", fontSize = 20.sp) },
-                    label = { Text(if (isDietitian) "Danışanlar" else "Geçmişim", fontWeight = FontWeight.Medium) },
-                    selected = true,
-                    onClick = {}
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Profil") },
+                    label = { Text("Profil", fontWeight = FontWeight.Medium) },
+                    selected = false,
+                    onClick = { onNavigateToHome("profile") }
                 )
             }
         }
