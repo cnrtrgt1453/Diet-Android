@@ -62,6 +62,9 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
     val navController = rememberNavController()
     var startDestination by remember { mutableStateOf("splash") }
+    val homeViewModel: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(apiService)
+    )
 
     LaunchedEffect(Unit) {
         val context = navController.context
@@ -161,9 +164,6 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 )
             ) { backStackEntry ->
                 val dialog = backStackEntry.arguments?.getString("dialog")
-                val homeViewModel: HomeViewModel = viewModel(
-                    factory = HomeViewModelFactory(apiService)
-                )
                 HomeScreen(
                     viewModel = homeViewModel,
                     initialDialog = dialog,
@@ -206,9 +206,6 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 )
             }
             composable("slots") {
-                val homeViewModel: HomeViewModel = viewModel(
-                    factory = HomeViewModelFactory(apiService)
-                )
                 AvailabilitySlotsScreen(
                     viewModel = homeViewModel,
                     onNavigateToHome = { dialog ->
