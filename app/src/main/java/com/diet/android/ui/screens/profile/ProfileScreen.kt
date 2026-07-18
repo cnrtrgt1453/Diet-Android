@@ -179,6 +179,10 @@ fun ProfileScreen(
                 val activeSocials = socialMedia.filter { !it.first.isNullOrBlank() }
 
                 if (activeSocials.isNotEmpty()) {
+                    val goldGradient = androidx.compose.ui.graphics.Brush.linearGradient(
+                        colors = listOf(Color(0xFFD4A343), Color(0xFF9E711C))
+                    )
+
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -186,19 +190,32 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         activeSocials.forEach { (url, iconRes, desc) ->
-                            IconButton(
-                                onClick = { openUrl(url!!) },
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .shadow(2.dp, RoundedCornerShape(12.dp))
-                                    .background(Color.White, shape = RoundedCornerShape(12.dp))
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.width(60.dp)
                             ) {
-                                Image(
-                                    painter = painterResource(id = iconRes),
-                                    contentDescription = desc,
+                                IconButton(
+                                    onClick = { openUrl(url!!) },
                                     modifier = Modifier
                                         .size(50.dp)
-                                        .clip(RoundedCornerShape(12.dp))
+                                        .shadow(4.dp, RoundedCornerShape(16.dp))
+                                        .background(goldGradient, shape = RoundedCornerShape(16.dp))
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = iconRes),
+                                        contentDescription = desc,
+                                        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = desc,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1
                                 )
                             }
                         }
