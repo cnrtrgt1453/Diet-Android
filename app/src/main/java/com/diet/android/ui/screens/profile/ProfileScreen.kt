@@ -179,8 +179,8 @@ fun ProfileScreen(
                 val activeSocials = socialMedia.filter { !it.first.isNullOrBlank() }
 
                 if (activeSocials.isNotEmpty()) {
-                    val goldGradient = androidx.compose.ui.graphics.Brush.linearGradient(
-                        colors = listOf(Color(0xFFD4A343), Color(0xFF9E711C))
+                    val greenGradient = androidx.compose.ui.graphics.Brush.linearGradient(
+                        colors = listOf(Color(0xFF34D399), Color(0xFF10B981))
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -199,7 +199,7 @@ fun ProfileScreen(
                                     modifier = Modifier
                                         .size(50.dp)
                                         .shadow(4.dp, RoundedCornerShape(16.dp))
-                                        .background(goldGradient, shape = RoundedCornerShape(16.dp))
+                                        .background(greenGradient, shape = RoundedCornerShape(16.dp))
                                 ) {
                                     Image(
                                         painter = painterResource(id = iconRes),
