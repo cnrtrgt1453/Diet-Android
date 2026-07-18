@@ -149,9 +149,9 @@ fun ProfileScreen(
                     contentDescription = "Profil Resmi",
                     modifier = Modifier
                         .size(120.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                        .shadow(4.dp, CircleShape),
+                        .shadow(4.dp, CircleShape)
+                        .background(Color.White, CircleShape)
+                        .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
 

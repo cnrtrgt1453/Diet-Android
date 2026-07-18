@@ -114,17 +114,17 @@ fun ProfileEditScreen(
                         contentDescription = "Profil Fotoğrafı",
                         modifier = Modifier
                             .fillMaxSize()
-                            .clip(CircleShape)
-                            .background(Color.White)
-                            .shadow(2.dp, CircleShape),
+                            .shadow(2.dp, CircleShape)
+                            .background(Color.White, CircleShape)
+                            .clip(CircleShape),
                         contentScale = ContentScale.Crop
                     )
 
                     Box(
                         modifier = Modifier
                             .size(34.dp)
-                            .background(GreenPrimary, CircleShape)
-                            .shadow(1.dp, CircleShape),
+                            .shadow(1.dp, CircleShape)
+                            .background(GreenPrimary, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
