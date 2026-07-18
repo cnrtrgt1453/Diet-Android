@@ -28,6 +28,7 @@ fun HomeScreen(
     onNavigateToExplore: () -> Unit,
     onNavigateToSlots: () -> Unit,
     onNavigateToAnalytics: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     viewModel: HomeViewModel,
     initialDialog: String? = null
 ) {
@@ -183,12 +184,18 @@ fun HomeScreen(
                     )
                 }
 
-                // Profil (Tüm roller için ortak)
+                // Profil
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profil") },
                     label = { Text("Profil", fontWeight = FontWeight.Medium) },
                     selected = false,
-                    onClick = { showProfileEditDialog = true }
+                    onClick = {
+                        if (userInfo?.role == "ROLE_DIETITIAN") {
+                            onNavigateToProfile()
+                        } else {
+                            showProfileEditDialog = true
+                        }
+                    }
                 )
             }
         }

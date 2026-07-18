@@ -34,6 +34,8 @@ fun ProfileEditDialog(
     var instagramUrl by remember { mutableStateOf(user.instagramUrl ?: "") }
     var linkedinUrl by remember { mutableStateOf(user.linkedinUrl ?: "") }
     var youtubeUrl by remember { mutableStateOf(user.youtubeUrl ?: "") }
+    var xUrl by remember { mutableStateOf(user.xUrl ?: "") }
+    var facebookUrl by remember { mutableStateOf(user.facebookUrl ?: "") }
     var profilePictureUrl by remember { mutableStateOf(user.profilePictureUrl ?: "") }
 
     // Client fields
@@ -115,6 +117,22 @@ fun ProfileEditDialog(
                         value = youtubeUrl,
                         onValueChange = { youtubeUrl = it },
                         label = { Text("Youtube Kanal Linki") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = xUrl,
+                        onValueChange = { xUrl = it },
+                        label = { Text("X (Twitter) Profil Linki") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = facebookUrl,
+                        onValueChange = { facebookUrl = it },
+                        label = { Text("Facebook Profil Linki") },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
@@ -214,6 +232,8 @@ fun ProfileEditDialog(
                                 instagramUrl = instagramUrl.ifEmpty { null },
                                 linkedinUrl = linkedinUrl.ifEmpty { null },
                                 youtubeUrl = youtubeUrl.ifEmpty { null },
+                                xUrl = xUrl.ifEmpty { null },
+                                facebookUrl = facebookUrl.ifEmpty { null },
                                 profilePictureUrl = profilePictureUrl.ifEmpty { null },
                                 height = height.toDoubleOrNull(),
                                 currentWeight = currentWeight.toDoubleOrNull(),

@@ -46,6 +46,8 @@ data class UserInfo(
     val instagramUrl: String?,
     val linkedinUrl: String?,
     val youtubeUrl: String?,
+    val xUrl: String? = null,
+    val facebookUrl: String? = null,
     val profilePictureUrl: String?,
     val fcmToken: String?,
     val startingWeight: Double? = null,
@@ -66,6 +68,8 @@ data class ProfileUpdateRequest(
     val instagramUrl: String? = null,
     val linkedinUrl: String? = null,
     val youtubeUrl: String? = null,
+    val xUrl: String? = null,
+    val facebookUrl: String? = null,
     val notes: String? = null,
     val profilePictureUrl: String? = null
 )

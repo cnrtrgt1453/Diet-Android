@@ -30,7 +30,8 @@ fun AvailabilitySlotsScreen(
     viewModel: HomeViewModel,
     onNavigateToHome: (String?) -> Unit,
     onNavigateToExplore: () -> Unit,
-    onNavigateToAnalytics: () -> Unit
+    onNavigateToAnalytics: () -> Unit,
+    onNavigateToProfile: () -> Unit
 ) {
     val context = LocalContext.current
     val userInfo = viewModel.userInfo
@@ -141,12 +142,18 @@ fun AvailabilitySlotsScreen(
                     )
                 }
 
-                // Profil (Tüm roller için ortak)
+                // Profil
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profil") },
                     label = { Text("Profil", fontWeight = FontWeight.Medium) },
                     selected = false,
-                    onClick = { onNavigateToHome("profile") }
+                    onClick = {
+                        if (userInfo?.role == "ROLE_DIETITIAN") {
+                            onNavigateToProfile()
+                        } else {
+                            onNavigateToHome("profile")
+                        }
+                    }
                 )
             }
         }

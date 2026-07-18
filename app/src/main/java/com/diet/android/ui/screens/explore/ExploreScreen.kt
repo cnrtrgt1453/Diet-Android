@@ -33,6 +33,7 @@ fun ExploreScreen(
     onNavigateToHome: (String?) -> Unit,
     onNavigateToSlots: () -> Unit,
     onNavigateToAnalytics: () -> Unit,
+    onNavigateToProfile: () -> Unit,
     viewModel: ExploreViewModel
 ) {
     val context = LocalContext.current
@@ -139,12 +140,18 @@ fun ExploreScreen(
                     )
                 }
 
-                // Profil (Tüm roller için ortak)
+                // Profil
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profil") },
                     label = { Text("Profil", fontWeight = FontWeight.Medium) },
                     selected = false,
-                    onClick = { onNavigateToHome("profile") }
+                    onClick = {
+                        if (userInfo?.role == "ROLE_DIETITIAN") {
+                            onNavigateToProfile()
+                        } else {
+                            onNavigateToHome("profile")
+                        }
+                    }
                 )
             }
         }

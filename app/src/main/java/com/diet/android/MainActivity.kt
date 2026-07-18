@@ -31,6 +31,7 @@ import com.diet.android.ui.screens.login.LoginViewModelFactory
 import com.diet.android.ui.screens.profile.CompleteProfileScreen
 import com.diet.android.ui.screens.profile.CompleteProfileViewModel
 import com.diet.android.ui.screens.profile.CompleteProfileViewModelFactory
+import com.diet.android.ui.screens.profile.ProfileScreen
 import com.diet.android.ui.screens.status.ApplicationStatusScreen
 import com.diet.android.ui.theme.DietAppTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -188,6 +189,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                         navController.navigate("analytics") {
                             launchSingleTop = true
                         }
+                    },
+                    onNavigateToProfile = {
+                        navController.navigate("profile") {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -213,6 +219,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                         navController.navigate("analytics") {
                             launchSingleTop = true
                         }
+                    },
+                    onNavigateToProfile = {
+                        navController.navigate("profile") {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -235,6 +246,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                         navController.navigate("analytics") {
                             launchSingleTop = true
                         }
+                    },
+                    onNavigateToProfile = {
+                        navController.navigate("profile") {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -255,6 +271,38 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                     },
                     onNavigateToSlots = {
                         navController.navigate("slots") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToProfile = {
+                        navController.navigate("profile") {
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+            composable("profile") {
+                ProfileScreen(
+                    viewModel = homeViewModel,
+                    onNavigateToHome = { dialog ->
+                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                        navController.navigate(route) {
+                            popUpTo("home") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToExplore = {
+                        navController.navigate("explore") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToSlots = {
+                        navController.navigate("slots") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToAnalytics = {
+                        navController.navigate("analytics") {
                             launchSingleTop = true
                         }
                     }
