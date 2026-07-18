@@ -27,6 +27,7 @@ fun HomeScreen(
     onLogout: () -> Unit,
     onNavigateToExplore: () -> Unit,
     onNavigateToSlots: () -> Unit,
+    onNavigateToAnalytics: () -> Unit,
     viewModel: HomeViewModel,
     initialDialog: String? = null
 ) {
@@ -34,7 +35,6 @@ fun HomeScreen(
     val userInfo = viewModel.userInfo
 
     var showAppointmentDialog by remember { mutableStateOf(false) }
-    var showClinicAnalyticsDialog by remember { mutableStateOf(false) }
     var showApplicationsDialog by remember { mutableStateOf(false) }
     var showNotificationDialog by remember { mutableStateOf(false) }
     var showProfileEditDialog by remember { mutableStateOf(false) }
@@ -42,7 +42,7 @@ fun HomeScreen(
     LaunchedEffect(initialDialog) {
         when (initialDialog) {
             "appointment" -> showAppointmentDialog = true
-            "analytics" -> showClinicAnalyticsDialog = true
+            "analytics" -> onNavigateToAnalytics()
             "applications" -> showApplicationsDialog = true
             "profile" -> showProfileEditDialog = true
         }
@@ -156,7 +156,7 @@ fun HomeScreen(
                         icon = { Icon(Icons.Default.Analytics, contentDescription = "Analizler") },
                         label = { Text("Analizler", fontWeight = FontWeight.Medium) },
                         selected = false,
-                        onClick = { showClinicAnalyticsDialog = true }
+                        onClick = onNavigateToAnalytics
                     )
                 } else if (userInfo?.role == "ROLE_USER") {
                     // Geçmişim
@@ -244,11 +244,6 @@ fun HomeScreen(
                 viewModel = viewModel
             )
 
-            ClinicAnalyticsDialog(
-                visible = showClinicAnalyticsDialog,
-                onClose = { showClinicAnalyticsDialog = false },
-                viewModel = viewModel
-            )
 
             DietitianApplicationsDialog(
                 visible = showApplicationsDialog,

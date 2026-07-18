@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.*
 fun ExploreScreen(
     onNavigateToHome: (String?) -> Unit,
     onNavigateToSlots: () -> Unit,
+    onNavigateToAnalytics: () -> Unit,
     viewModel: ExploreViewModel
 ) {
     val context = LocalContext.current
@@ -111,7 +112,7 @@ fun ExploreScreen(
                         icon = { Icon(Icons.Default.Analytics, contentDescription = "Analizler") },
                         label = { Text("Analizler", fontWeight = FontWeight.Medium) },
                         selected = false,
-                        onClick = { onNavigateToHome("analytics") }
+                        onClick = onNavigateToAnalytics
                     )
                 } else if (userInfo?.role == "ROLE_USER") {
                     // Geçmişim

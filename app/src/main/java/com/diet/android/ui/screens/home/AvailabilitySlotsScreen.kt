@@ -29,7 +29,8 @@ import java.time.format.DateTimeFormatter
 fun AvailabilitySlotsScreen(
     viewModel: HomeViewModel,
     onNavigateToHome: (String?) -> Unit,
-    onNavigateToExplore: () -> Unit
+    onNavigateToExplore: () -> Unit,
+    onNavigateToAnalytics: () -> Unit
 ) {
     val context = LocalContext.current
     val userInfo = viewModel.userInfo
@@ -136,7 +137,7 @@ fun AvailabilitySlotsScreen(
                         icon = { Icon(Icons.Default.Analytics, contentDescription = "Analizler") },
                         label = { Text("Analizler", fontWeight = FontWeight.Medium) },
                         selected = false,
-                        onClick = { onNavigateToHome("analytics") }
+                        onClick = onNavigateToAnalytics
                     )
                 }
 
