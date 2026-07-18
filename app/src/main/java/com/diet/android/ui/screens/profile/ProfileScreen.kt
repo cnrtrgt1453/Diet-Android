@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.diet.android.R
 import com.diet.android.ui.screens.home.HomeViewModel
-import com.diet.android.ui.screens.home.components.ProfileEditDialog
 import com.diet.android.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,11 +38,11 @@ fun ProfileScreen(
     onNavigateToHome: (String?) -> Unit,
     onNavigateToExplore: () -> Unit,
     onNavigateToSlots: () -> Unit,
-    onNavigateToAnalytics: () -> Unit
+    onNavigateToAnalytics: () -> Unit,
+    onNavigateToProfileEdit: () -> Unit
 ) {
     val context = LocalContext.current
     val userInfo = viewModel.userInfo ?: return
-    var showEditDialog by remember { mutableStateOf(false) }
 
     fun openUrl(url: String) {
         try {
@@ -190,16 +189,16 @@ fun ProfileScreen(
                             IconButton(
                                 onClick = { openUrl(url!!) },
                                 modifier = Modifier
-                                    .size(44.dp)
-                                    .shadow(2.dp, CircleShape)
-                                    .background(Color.White, shape = CircleShape)
+                                    .size(50.dp)
+                                    .shadow(2.dp, RoundedCornerShape(12.dp))
+                                    .background(Color.White, shape = RoundedCornerShape(12.dp))
                             ) {
                                 Image(
                                     painter = painterResource(id = iconRes),
                                     contentDescription = desc,
                                     modifier = Modifier
-                                        .size(24.dp)
-                                        .clip(CircleShape)
+                                        .size(50.dp)
+                                        .clip(RoundedCornerShape(12.dp))
                                 )
                             }
                         }
@@ -238,7 +237,7 @@ fun ProfileScreen(
 
                 // Edit Button
                 Button(
-                    onClick = { showEditDialog = true },
+                    onClick = onNavigateToProfileEdit,
                     colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -271,11 +270,6 @@ fun ProfileScreen(
                 }
             }
 
-            ProfileEditDialog(
-                visible = showEditDialog,
-                onClose = { showEditDialog = false },
-                viewModel = viewModel
-            )
         }
     }
 }

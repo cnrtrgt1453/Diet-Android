@@ -29,6 +29,12 @@ interface ApiService {
     @PUT("api/v1/users/profile")
     suspend fun updateProfile(@Body request: ProfileUpdateRequest): UserInfo
 
+    @retrofit2.http.Multipart
+    @POST("api/v1/users/profile-picture")
+    suspend fun uploadProfilePicture(
+        @retrofit2.http.Part file: okhttp3.MultipartBody.Part
+    ): UserInfo
+
     @GET("api/v1/test/me")
     suspend fun getCurrentUser(): UserInfo
 

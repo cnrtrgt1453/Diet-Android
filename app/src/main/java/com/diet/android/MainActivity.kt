@@ -32,6 +32,7 @@ import com.diet.android.ui.screens.profile.CompleteProfileScreen
 import com.diet.android.ui.screens.profile.CompleteProfileViewModel
 import com.diet.android.ui.screens.profile.CompleteProfileViewModelFactory
 import com.diet.android.ui.screens.profile.ProfileScreen
+import com.diet.android.ui.screens.profile.ProfileEditScreen
 import com.diet.android.ui.screens.status.ApplicationStatusScreen
 import com.diet.android.ui.theme.DietAppTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -305,7 +306,18 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                         navController.navigate("analytics") {
                             launchSingleTop = true
                         }
+                    },
+                    onNavigateToProfileEdit = {
+                        navController.navigate("profile_edit") {
+                            launchSingleTop = true
+                        }
                     }
+                )
+            }
+            composable("profile_edit") {
+                ProfileEditScreen(
+                    viewModel = homeViewModel,
+                    onNavigateBack = { navController.popBackStack() }
                 )
             }
         }

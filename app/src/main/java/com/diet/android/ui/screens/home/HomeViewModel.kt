@@ -13,6 +13,8 @@ import com.diet.android.data.model.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.asRequestBody
 
 sealed interface HomeUiEvent {
     data class Error(val message: String) : HomeUiEvent
@@ -424,6 +426,32 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
                 _uiEvent.emit(HomeUiEvent.ShowMessage("Profil başarıyla güncellendi!"))
             } catch (e: Exception) {
                 _uiEvent.emit(HomeUiEvent.Error("Profil güncellenemedi: ${e.localizedMessage}"))
+            }
+        }
+    }
+
+    fun uploadProfilePicture(context: android.content.Context, uri: android.net.Uri) {
+        isLoading = true
+        viewModelScope.launch {
+            try {
+                val file = java.io.File(context.cacheDir, "temp_profile_picture.jpg")
+                context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    file.outputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+
+                val mediaType = (context.contentResolver.getType(uri) ?: "image/*").toMediaTypeOrNull()
+                val requestFile = file.asRequestBody(mediaType)
+                val body = okhttp3.MultipartBody.Part.createFormData("file", file.name, requestFile)
+
+                val updatedUser = apiService.uploadProfilePicture(body)
+                userInfo = updatedUser
+                _uiEvent.emit(HomeUiEvent.ShowMessage("Profil fotoğrafı başarıyla güncellendi!"))
+            } catch (e: Exception) {
+                _uiEvent.emit(HomeUiEvent.Error("Profil fotoğrafı yüklenemedi: ${e.localizedMessage}"))
+            } finally {
+                isLoading = false
             }
         }
     }
