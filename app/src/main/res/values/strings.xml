@@ -4,4 +4,5 @@
     <string name="facebook_app_id">1052532350545638</string>
     <string name="fb_login_protocol_scheme">fb1052532350545638</string>
     <string name="facebook_client_token">PASTE_YOUR_META_CLIENT_TOKEN_HERE</string>
+    <string name="google_web_client_id">615697453014-8ie5mi8g2a3ch43ng9es0vlrbu2qletu.apps.googleusercontent.com</string>
 </resources>

@@ -26,7 +26,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.diet.android.data.model.DietitianApplicationDto
 import com.diet.android.ui.theme.*
-import kotlinx.coroutines.flow.collectLatest
+import android.widget.Toast
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.CustomCredential
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import kotlinx.coroutines.launch
 
 enum class LoginRole { NONE, DIETITIAN, CLIENT }
 
@@ -37,6 +43,8 @@ fun LoginScreen(
     viewModel: LoginViewModel
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val credentialManager = remember { CredentialManager.create(context) }
     var role by remember { mutableStateOf(LoginRole.NONE) }
     var showAlert by remember { mutableStateOf(false) }
     var alertTitle by remember { mutableStateOf("") }
@@ -112,7 +120,47 @@ fun LoginScreen(
                 ClientLoginView(
                     viewModel = viewModel,
                     context = context,
-                    onBack = { role = LoginRole.NONE }
+                    onBack = { role = LoginRole.NONE },
+                    onGoogleClick = {
+                        val webClientId = context.getString(com.diet.android.R.string.google_web_client_id)
+                        if (webClientId == "YOUR_GOOGLE_WEB_CLIENT_ID" || webClientId.isBlank()) {
+                            Toast.makeText(
+                                context,
+                                "Geliştirici Uyarısı: Web Client ID yapılandırılmadı. Geçici hesapla giriş yapılıyor.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            viewModel.loginWithSocial(context, "google", "mock-token-google")
+                            return@ClientLoginView
+                        }
+
+                        val googleIdOption = GetGoogleIdOption.Builder()
+                            .setFilterByAuthorizedAccounts(false)
+                            .setServerClientId(webClientId)
+                            .setAutoSelectEnabled(false)
+                            .build()
+
+                        val request = GetCredentialRequest.Builder()
+                            .addCredentialOption(googleIdOption)
+                            .build()
+
+                        coroutineScope.launch {
+                            try {
+                                val result = credentialManager.getCredential(
+                                    context = context,
+                                    request = request
+                                )
+                                val credential = result.credential
+                                if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                                    val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                                    viewModel.loginWithSocial(context, "google", googleIdTokenCredential.idToken)
+                                } else {
+                                    Toast.makeText(context, "Bilinmeyen kimlik doğrulama tipi.", Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Google Girişi İptal Edildi veya Başarısız: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
                 )
             }
         }
@@ -376,7 +424,8 @@ fun DietitianLoginView(
 fun ClientLoginView(
     viewModel: LoginViewModel,
     context: Context,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onGoogleClick: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         TextButton(onClick = onBack, modifier = Modifier.padding(bottom = 8.dp)) {
@@ -406,7 +455,7 @@ fun ClientLoginView(
                 .fillMaxWidth()
                 .height(50.dp)
                 .clickable {
-                    viewModel.loginWithSocial(context, "google", "mock-token-google")
+                    onGoogleClick()
                 }
                 .padding(vertical = 6.dp)
         ) {
