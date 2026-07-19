@@ -84,9 +84,10 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
                             )
                         )
                     }
-                    .onFailure {
+                    .onFailure { error ->
+                        error.printStackTrace()
                         ApiClient.clearToken(context)
-                        _uiEvent.emit(LoginUiEvent.Error("Sosyal kullanıcı bilgileri alınamadı."))
+                        _uiEvent.emit(LoginUiEvent.Error("Sosyal kullanıcı bilgileri alınamadı: ${error.localizedMessage}"))
                     }
             }.onFailure { error ->
                 _uiEvent.emit(LoginUiEvent.Error(error.localizedMessage ?: "Kimlik doğrulama başarısız."))
