@@ -140,6 +140,49 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
         }
     }
 
+    fun reloadInitialData() {
+        viewModelScope.launch {
+            try {
+                val me = apiService.getCurrentUser()
+                userInfo = me
+
+                if (me.role == "ROLE_DIETITIAN") {
+                    val loadedClients = apiService.getClients()
+                    clients = loadedClients
+                    filteredClients = loadedClients
+                } else {
+                    myMeasurements = apiService.getClientMeasurements(me.id)
+                    myDiets = apiService.getClientDiets(me.id)
+                    try {
+                        myDailyLogs = apiService.getClientDailyLogs(me.id)
+                    } catch (e: Exception) {
+                        myDailyLogs = emptyList()
+                    }
+                    if (me.dietitian != null) {
+                        try {
+                            val history = apiService.getChatHistory(me.dietitian.id)
+                            val oneMonthAgo = java.time.LocalDateTime.now().minusDays(30)
+                            pastMonthChatMessages = history.filter { msg ->
+                                try {
+                                    val dt = java.time.LocalDateTime.parse(msg.sentAt)
+                                    dt.isAfter(oneMonthAgo)
+                                } catch (e: Exception) {
+                                    true
+                                }
+                            }
+                        } catch (e: Exception) {
+                            pastMonthChatMessages = emptyList()
+                        }
+                    } else {
+                        pastMonthChatMessages = emptyList()
+                    }
+                }
+            } catch (e: Exception) {
+                // ignore
+            }
+        }
+    }
+
     fun filterClients(query: String, category: String) {
         var filtered = clients
         if (query.isNotBlank()) {
@@ -322,6 +365,7 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
         webSocket = null
         chatWithUser = null
         chatMessages = emptyList()
+        reloadInitialData()
     }
 
     override fun onCleared() {
