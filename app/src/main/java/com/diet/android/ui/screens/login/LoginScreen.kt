@@ -33,6 +33,7 @@ import androidx.credentials.CustomCredential
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 
 enum class LoginRole { NONE, DIETITIAN, CLIENT }
 
