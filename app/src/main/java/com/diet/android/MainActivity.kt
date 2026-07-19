@@ -20,6 +20,7 @@ import com.diet.android.data.repository.AuthRepository
 import com.diet.android.ui.screens.home.HomeScreen
 import com.diet.android.ui.screens.home.AvailabilitySlotsScreen
 import com.diet.android.ui.screens.home.AnalyticsScreen
+import com.diet.android.ui.screens.home.DietitianMessagesScreen
 import com.diet.android.ui.screens.home.HomeViewModel
 import com.diet.android.ui.screens.home.HomeViewModelFactory
 import com.diet.android.ui.screens.explore.ExploreScreen
@@ -186,6 +187,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                             launchSingleTop = true
                         }
                     },
+                    onNavigateToMessages = {
+                        navController.navigate("messages") {
+                            launchSingleTop = true
+                        }
+                    },
                     onNavigateToAnalytics = {
                         navController.navigate("analytics") {
                             launchSingleTop = true
@@ -208,6 +214,46 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                         val route = if (dialog != null) "home?dialog=$dialog" else "home"
                         navController.navigate(route) {
                             popUpTo("home") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToSlots = {
+                        navController.navigate("slots") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToMessages = {
+                        navController.navigate("messages") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToAnalytics = {
+                        navController.navigate("analytics") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToProfile = {
+                        navController.navigate("profile") {
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+            composable("messages") {
+                val exploreViewModel: ExploreViewModel = viewModel(
+                    factory = ExploreViewModelFactory(apiService)
+                )
+                DietitianMessagesScreen(
+                    viewModel = exploreViewModel,
+                    onNavigateToHome = { dialog ->
+                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                        navController.navigate(route) {
+                            popUpTo("home") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToExplore = {
+                        navController.navigate("explore") {
                             launchSingleTop = true
                         }
                     },
@@ -243,6 +289,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                             launchSingleTop = true
                         }
                     },
+                    onNavigateToMessages = {
+                        navController.navigate("messages") {
+                            launchSingleTop = true
+                        }
+                    },
                     onNavigateToAnalytics = {
                         navController.navigate("analytics") {
                             launchSingleTop = true
@@ -275,6 +326,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                             launchSingleTop = true
                         }
                     },
+                    onNavigateToMessages = {
+                        navController.navigate("messages") {
+                            launchSingleTop = true
+                        }
+                    },
                     onNavigateToProfile = {
                         navController.navigate("profile") {
                             launchSingleTop = true
@@ -299,6 +355,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                     },
                     onNavigateToSlots = {
                         navController.navigate("slots") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToMessages = {
+                        navController.navigate("messages") {
                             launchSingleTop = true
                         }
                     },

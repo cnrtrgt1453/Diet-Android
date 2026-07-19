@@ -25,6 +25,7 @@ fun AnalyticsScreen(
     onNavigateToHome: (String?) -> Unit,
     onNavigateToExplore: () -> Unit,
     onNavigateToSlots: () -> Unit,
+    onNavigateToMessages: () -> Unit,
     onNavigateToProfile: () -> Unit
 ) {
     val userInfo = viewModel.userInfo
@@ -77,6 +78,13 @@ fun AnalyticsScreen(
                         label = { Text("Slot Ekle", fontWeight = FontWeight.Medium) },
                         selected = false,
                         onClick = onNavigateToSlots
+                    )
+                    // Mesajlarım
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
+                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToMessages
                     )
                     // Klinik Analitiği
                     NavigationBarItem(

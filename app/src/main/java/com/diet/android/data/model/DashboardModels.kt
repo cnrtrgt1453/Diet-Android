@@ -124,6 +124,16 @@ data class MessageRequest(
     val content: String
 )
 
+data class ConversationSummary(
+    val partnerId: Long,
+    val partnerName: String?,
+    val partnerEmail: String?,
+    val partnerCategory: String?,
+    val lastMessage: String?,
+    val lastMessageSentAt: String?,
+    val unreadCount: Long
+)
+
 data class DietitianAvailability(
     val id: Long? = null,
     val date: String,

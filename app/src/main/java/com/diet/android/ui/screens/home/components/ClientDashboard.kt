@@ -38,7 +38,7 @@ fun ClientDashboard(
 
     val todayLog = viewModel.todayDailyLog
     LaunchedEffect(todayLog) {
-        if (todayLog != null) {
+        if (todayLog != null && todayLog.date == java.time.LocalDate.now().toString()) {
             glp1Nausea = todayLog.glp1Nausea ?: 2
             sideEffectLevel = todayLog.sideEffectLevel ?: 1
             painLevel = todayLog.painLevel ?: 2
@@ -46,6 +46,14 @@ fun ClientDashboard(
             sugarFree = todayLog.sugarFree ?: true
             fastingGlucose = todayLog.fastingBloodGlucose?.toString() ?: ""
             insulinLevel = todayLog.insulinLevel?.toString() ?: ""
+        } else {
+            glp1Nausea = 2
+            sideEffectLevel = 1
+            painLevel = 2
+            glutenFree = true
+            sugarFree = true
+            fastingGlucose = ""
+            insulinLevel = ""
         }
     }
 
@@ -211,22 +219,25 @@ fun ClientDashboard(
                     }
                 }
 
+                val isToday = viewModel.todayDailyLog?.date == java.time.LocalDate.now().toString()
+                val currentTotalWater = if (isToday) viewModel.todayDailyLog?.waterIntakeMl ?: 0 else 0
+
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {
                         val currentLog = viewModel.todayDailyLog
                         viewModel.saveDailyLog(
                             DailyLog(
-                                id = currentLog?.id,
+                                id = if (isToday) currentLog?.id else null,
                                 date = java.time.LocalDate.now().toString(),
-                                waterIntakeMl = (currentLog?.waterIntakeMl ?: 0) + waterIntake,
-                                sideEffectLevel = if (userInfo?.category == "GLP_1") sideEffectLevel else currentLog?.sideEffectLevel,
-                                glp1Nausea = if (userInfo?.category == "GLP_1") glp1Nausea else currentLog?.glp1Nausea,
-                                painLevel = if (userInfo?.category == "LIPEDEMA") painLevel else currentLog?.painLevel,
-                                glutenFree = if (userInfo?.category == "LIPEDEMA") glutenFree else currentLog?.glutenFree,
-                                sugarFree = if (userInfo?.category == "LIPEDEMA") sugarFree else currentLog?.sugarFree,
-                                fastingBloodGlucose = fastingGlucose.toDoubleOrNull() ?: currentLog?.fastingBloodGlucose,
-                                insulinLevel = insulinLevel.toDoubleOrNull() ?: currentLog?.insulinLevel
+                                waterIntakeMl = currentTotalWater + waterIntake,
+                                sideEffectLevel = if (userInfo?.category == "GLP_1") sideEffectLevel else if (isToday) currentLog?.sideEffectLevel else null,
+                                glp1Nausea = if (userInfo?.category == "GLP_1") glp1Nausea else if (isToday) currentLog?.glp1Nausea else null,
+                                painLevel = if (userInfo?.category == "LIPEDEMA") painLevel else if (isToday) currentLog?.painLevel else null,
+                                glutenFree = if (userInfo?.category == "LIPEDEMA") glutenFree else if (isToday) currentLog?.glutenFree else null,
+                                sugarFree = if (userInfo?.category == "LIPEDEMA") sugarFree else if (isToday) currentLog?.sugarFree else null,
+                                fastingBloodGlucose = fastingGlucose.toDoubleOrNull() ?: if (isToday) currentLog?.fastingBloodGlucose else null,
+                                insulinLevel = insulinLevel.toDoubleOrNull() ?: if (isToday) currentLog?.insulinLevel else null
                             )
                         )
                     },
@@ -239,7 +250,7 @@ fun ClientDashboard(
 
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Bugün gerçekten toplam tüketilen su: ${viewModel.todayDailyLog?.waterIntakeMl ?: 0} ml",
+                    text = "Bugün gerçekten toplam tüketilen su: $currentTotalWater ml",
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary,

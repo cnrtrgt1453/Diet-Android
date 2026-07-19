@@ -27,6 +27,7 @@ fun HomeScreen(
     onLogout: () -> Unit,
     onNavigateToExplore: () -> Unit,
     onNavigateToSlots: () -> Unit,
+    onNavigateToMessages: () -> Unit,
     onNavigateToAnalytics: () -> Unit,
     onNavigateToProfile: () -> Unit,
     viewModel: HomeViewModel,
@@ -151,6 +152,13 @@ fun HomeScreen(
                         label = { Text("Slot Ekle", fontWeight = FontWeight.Medium) },
                         selected = false,
                         onClick = onNavigateToSlots
+                    )
+                    // Mesajlarım
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
+                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToMessages
                     )
                     // Klinik Analitiği
                     NavigationBarItem(

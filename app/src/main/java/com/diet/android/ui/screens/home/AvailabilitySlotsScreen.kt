@@ -30,6 +30,7 @@ fun AvailabilitySlotsScreen(
     viewModel: HomeViewModel,
     onNavigateToHome: (String?) -> Unit,
     onNavigateToExplore: () -> Unit,
+    onNavigateToMessages: () -> Unit,
     onNavigateToAnalytics: () -> Unit,
     onNavigateToProfile: () -> Unit
 ) {
@@ -132,6 +133,13 @@ fun AvailabilitySlotsScreen(
                             // Update list and clear expired slots
                             viewModel.loadDietitianSlots()
                         }
+                    )
+                    // Mesajlarım
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
+                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToMessages
                     )
                     // Klinik Analitiği
                     NavigationBarItem(

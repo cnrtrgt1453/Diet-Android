@@ -70,6 +70,23 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
         private set
     var chatMessages by mutableStateOf<List<ChatMessage>>(emptyList())
         private set
+    var pastMonthChatMessages by mutableStateOf<List<ChatMessage>>(emptyList())
+        private set
+    var inboxList by mutableStateOf<List<ConversationSummary>>(emptyList())
+        private set
+
+    fun loadInbox() {
+        isLoading = true
+        viewModelScope.launch {
+            try {
+                inboxList = apiService.getInbox()
+            } catch (e: Exception) {
+                _uiEvent.emit(ExploreUiEvent.Error("Gelen kutusu yüklenemedi: ${e.localizedMessage}"))
+            } finally {
+                isLoading = false
+            }
+        }
+    }
 
     private val _uiEvent = MutableSharedFlow<ExploreUiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
@@ -95,6 +112,24 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
                         myDailyLogs = apiService.getClientDailyLogs(me.id)
                     } catch (e: Exception) {
                         myDailyLogs = emptyList()
+                    }
+                    if (me.dietitian != null) {
+                        try {
+                            val history = apiService.getChatHistory(me.dietitian.id)
+                            val oneMonthAgo = java.time.LocalDateTime.now().minusDays(30)
+                            pastMonthChatMessages = history.filter { msg ->
+                                try {
+                                    val dt = java.time.LocalDateTime.parse(msg.sentAt)
+                                    dt.isAfter(oneMonthAgo)
+                                } catch (e: Exception) {
+                                    true
+                                }
+                            }
+                        } catch (e: Exception) {
+                            pastMonthChatMessages = emptyList()
+                        }
+                    } else {
+                        pastMonthChatMessages = emptyList()
                     }
                 }
             } catch (e: Exception) {

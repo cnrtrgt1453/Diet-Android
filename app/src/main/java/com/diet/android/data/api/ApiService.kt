@@ -113,6 +113,9 @@ interface ApiService {
     @GET("api/v1/messages/history/{otherUserId}")
     suspend fun getChatHistory(@Path("otherUserId") otherUserId: Long): List<ChatMessage>
 
+    @GET("api/v1/messages/inbox")
+    suspend fun getInbox(): List<ConversationSummary>
+
     @POST("api/v1/messages/send/{recipientId}")
     suspend fun sendChatMessage(
         @Path("recipientId") recipientId: Long,
