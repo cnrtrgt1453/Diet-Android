@@ -38,6 +38,7 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
         private set
     var clientAppointments by mutableStateOf<List<Appointment>>(emptyList())
         private set
+    var todayDailyLog by mutableStateOf<DailyLog?>(null)
 
     // Dietitian states
     var dietitianStats by mutableStateOf<ClinicStats>(ClinicStats())
@@ -100,6 +101,15 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
                         todayDiet = null
                     }
                     try {
+                        val logs = apiService.getMyDailyLogs(
+                            startDate = java.time.LocalDate.now().toString(),
+                            endDate = java.time.LocalDate.now().toString()
+                        )
+                        todayDailyLog = logs.firstOrNull()
+                    } catch (e: Exception) {
+                        todayDailyLog = null
+                    }
+                    try {
                         correlationData = apiService.getCorrelationAnalysis(user.id)
                     } catch (e: Exception) {
                         correlationData = null
@@ -137,7 +147,8 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
         isLoading = true
         viewModelScope.launch {
             try {
-                apiService.saveDailyLog(log)
+                val savedLog = apiService.saveDailyLog(log)
+                todayDailyLog = savedLog
                 _uiEvent.emit(HomeUiEvent.ShowMessage("Günlük takip kaydınız başarıyla kaydedildi!"))
             } catch (e: Exception) {
                 _uiEvent.emit(HomeUiEvent.Error("Kayıt hatası: ${e.localizedMessage}"))

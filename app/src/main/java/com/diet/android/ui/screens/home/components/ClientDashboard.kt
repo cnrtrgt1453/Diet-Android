@@ -27,7 +27,7 @@ fun ClientDashboard(
     val appointments = viewModel.clientAppointments
     val prediction = viewModel.predictionData
 
-    var waterIntake by remember { mutableStateOf(1000) }
+    var waterIntake by remember { mutableStateOf(250) }
     var glp1Nausea by remember { mutableStateOf(2) }
     var sideEffectLevel by remember { mutableStateOf(1) }
     var painLevel by remember { mutableStateOf(2) }
@@ -35,6 +35,19 @@ fun ClientDashboard(
     var sugarFree by remember { mutableStateOf(true) }
     var fastingGlucose by remember { mutableStateOf("") }
     var insulinLevel by remember { mutableStateOf("") }
+
+    val todayLog = viewModel.todayDailyLog
+    LaunchedEffect(todayLog) {
+        if (todayLog != null) {
+            glp1Nausea = todayLog.glp1Nausea ?: 2
+            sideEffectLevel = todayLog.sideEffectLevel ?: 1
+            painLevel = todayLog.painLevel ?: 2
+            glutenFree = todayLog.glutenFree ?: true
+            sugarFree = todayLog.sugarFree ?: true
+            fastingGlucose = todayLog.fastingBloodGlucose?.toString() ?: ""
+            insulinLevel = todayLog.insulinLevel?.toString() ?: ""
+        }
+    }
 
     Column(modifier = modifier.fillMaxWidth()) {
         ElevatedCard(
@@ -201,17 +214,19 @@ fun ClientDashboard(
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {
+                        val currentLog = viewModel.todayDailyLog
                         viewModel.saveDailyLog(
                             DailyLog(
+                                id = currentLog?.id,
                                 date = java.time.LocalDate.now().toString(),
-                                waterIntakeMl = waterIntake,
-                                sideEffectLevel = if (userInfo?.category == "GLP_1") sideEffectLevel else null,
-                                glp1Nausea = if (userInfo?.category == "GLP_1") glp1Nausea else null,
-                                painLevel = if (userInfo?.category == "LIPEDEMA") painLevel else null,
-                                glutenFree = if (userInfo?.category == "LIPEDEMA") glutenFree else null,
-                                sugarFree = if (userInfo?.category == "LIPEDEMA") sugarFree else null,
-                                fastingBloodGlucose = fastingGlucose.toDoubleOrNull(),
-                                insulinLevel = insulinLevel.toDoubleOrNull()
+                                waterIntakeMl = (currentLog?.waterIntakeMl ?: 0) + waterIntake,
+                                sideEffectLevel = if (userInfo?.category == "GLP_1") sideEffectLevel else currentLog?.sideEffectLevel,
+                                glp1Nausea = if (userInfo?.category == "GLP_1") glp1Nausea else currentLog?.glp1Nausea,
+                                painLevel = if (userInfo?.category == "LIPEDEMA") painLevel else currentLog?.painLevel,
+                                glutenFree = if (userInfo?.category == "LIPEDEMA") glutenFree else currentLog?.glutenFree,
+                                sugarFree = if (userInfo?.category == "LIPEDEMA") sugarFree else currentLog?.sugarFree,
+                                fastingBloodGlucose = fastingGlucose.toDoubleOrNull() ?: currentLog?.fastingBloodGlucose,
+                                insulinLevel = insulinLevel.toDoubleOrNull() ?: currentLog?.insulinLevel
                             )
                         )
                     },
@@ -219,8 +234,17 @@ fun ClientDashboard(
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("💾 Bugünkü Kaydı Kaydet", color = Color.White, fontWeight = FontWeight.Medium)
+                    Text("💧 Bugünkü Su Tüketimine Ekle", color = Color.White, fontWeight = FontWeight.Medium)
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Bugün gerçekten toplam tüketilen su: ${viewModel.todayDailyLog?.waterIntakeMl ?: 0} ml",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
         }
 

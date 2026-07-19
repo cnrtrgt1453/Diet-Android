@@ -48,6 +48,12 @@ interface ApiService {
     @POST("api/v1/logs/daily")
     suspend fun saveDailyLog(@Body log: DailyLog): DailyLog
 
+    @GET("api/v1/logs/daily/my")
+    suspend fun getMyDailyLogs(
+        @Query("startDate") startDate: String?,
+        @Query("endDate") endDate: String?
+    ): List<DailyLog>
+
     @GET("api/v1/appointments/my")
     suspend fun getMyAppointments(): List<Appointment>
 
