@@ -138,6 +138,13 @@ fun ExploreScreen(
                         selected = false,
                         onClick = { onNavigateToHome("appointment") }
                     )
+                    // Mesajlarım
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
+                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToMessages
+                    )
                 } else if (userInfo?.role == "ROLE_ADMIN" || userInfo?.email == "suhedaterat2@gmail.com") {
                     // Başvurular (Admin için)
                     NavigationBarItem(
@@ -289,112 +296,7 @@ fun ExploreScreen(
                         }
                     }
 
-                    // Contact Card
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Card(
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = GreenPrimary.copy(alpha = 0.05f)),
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text("📍 Şüheda Terat Beslenme & Danışmanlık", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = TextDark)
-                            Text("Soru ve destek talepleriniz için diyetisyeninizle doğrudan sohbet başlatabilirsiniz.", fontSize = 11.sp, color = TextSecondaryDark)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            if (userInfo?.dietitian != null) {
-                                Button(
-                                    onClick = {
-                                        viewModel.startChat(userInfo.dietitian, context)
-                                        showChatDialog = true
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text("💬 Diyetisyenimle Sohbet Et", color = Color.White)
-                                }
-                            }
-                        }
-                    }
-
-                    // Lists
-                    // Chat History (Last 1 Month)
-                    Text(
-                        "💬 Diyetisyen Sohbet Geçmişiniz (Son 1 Ay)",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = TextDark,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
-
-                    if (viewModel.pastMonthChatMessages.isNotEmpty()) {
-                        Card(
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(14.dp)
-                                    .heightIn(max = 240.dp)
-                                    .verticalScroll(rememberScrollState())
-                            ) {
-                                viewModel.pastMonthChatMessages.forEach { msg ->
-                                    val isMe = msg.sender.id == userInfo?.id
-                                    val alignment = if (isMe) Alignment.End else Alignment.Start
-                                    val bubbleBg = if (isMe) GreenPrimary.copy(alpha = 0.15f) else Color(0xFFF1F1F1)
-                                    val textColor = if (isMe) TextDark else Color.Black
-
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(vertical = 4.dp),
-                                        horizontalAlignment = alignment
-                                    ) {
-                                        Surface(
-                                            shape = RoundedCornerShape(
-                                                topStart = 12.dp,
-                                                topEnd = 12.dp,
-                                                bottomStart = if (isMe) 12.dp else 0.dp,
-                                                bottomEnd = if (isMe) 0.dp else 12.dp
-                                            ),
-                                            color = bubbleBg,
-                                            modifier = Modifier.widthIn(max = 260.dp)
-                                        ) {
-                                            Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-                                                Text(
-                                                    text = msg.content,
-                                                    color = textColor,
-                                                    fontSize = 13.sp
-                                                )
-                                                Spacer(modifier = Modifier.height(2.dp))
-                                                Text(
-                                                    text = msg.sentAt?.substringAfter("T")?.take(5) ?: "",
-                                                    color = Color.Gray,
-                                                    fontSize = 10.sp,
-                                                    modifier = Modifier.align(Alignment.End)
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        Card(
-                            shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                        ) {
-                            Text(
-                                "Son 1 ayda diyetisyeninizle mesajlaşmanız bulunmuyor.",
-                                fontSize = 12.sp,
-                                color = TextSecondaryDark,
-                                modifier = Modifier.padding(16.dp)
-                            )
-                        }
-                    }
-
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text("📋 Ölçüm Geçmişiniz", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TextDark, modifier = Modifier.padding(vertical = 8.dp))
                     if (viewModel.myMeasurements.isNotEmpty()) {
                         viewModel.myMeasurements.forEach { m ->

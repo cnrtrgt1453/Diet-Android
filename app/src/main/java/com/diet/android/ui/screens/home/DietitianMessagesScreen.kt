@@ -77,53 +77,95 @@ fun DietitianMessagesScreen(
                 containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 8.dp
             ) {
-                // Ana Sayfa
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
-                    label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
-                    selected = false,
-                    onClick = { onNavigateToHome(null) }
-                )
+                if (userInfo?.role == "ROLE_DIETITIAN") {
+                    // Ana Sayfa
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
+                        label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { onNavigateToHome(null) }
+                    )
 
-                // Danışanlar
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.People, contentDescription = "Danışanlar") },
-                    label = { Text("Danışanlar", fontWeight = FontWeight.Medium) },
-                    selected = false,
-                    onClick = onNavigateToExplore
-                )
+                    // Danışanlar
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.People, contentDescription = "Danışanlar") },
+                        label = { Text("Danışanlar", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToExplore
+                    )
 
-                // Slot Ekle
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.DateRange, contentDescription = "Slot Ekle") },
-                    label = { Text("Slot Ekle", fontWeight = FontWeight.Medium) },
-                    selected = false,
-                    onClick = onNavigateToSlots
-                )
+                    // Slot Ekle
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.DateRange, contentDescription = "Slot Ekle") },
+                        label = { Text("Slot Ekle", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToSlots
+                    )
 
-                // Mesajlarım
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
-                    label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
-                    selected = true,
-                    onClick = {}
-                )
+                    // Mesajlarım
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
+                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        selected = true,
+                        onClick = {}
+                    )
 
-                // Klinik Analitiği
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Analytics, contentDescription = "Analizler") },
-                    label = { Text("Analizler", fontWeight = FontWeight.Medium) },
-                    selected = false,
-                    onClick = onNavigateToAnalytics
-                )
+                    // Klinik Analitiği
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Analytics, contentDescription = "Analizler") },
+                        label = { Text("Analizler", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToAnalytics
+                    )
 
-                // Profil
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profil") },
-                    label = { Text("Profil", fontWeight = FontWeight.Medium) },
-                    selected = false,
-                    onClick = onNavigateToProfile
-                )
+                    // Profil
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Person, contentDescription = "Profil") },
+                        label = { Text("Profil", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToProfile
+                    )
+                } else if (userInfo?.role == "ROLE_USER") {
+                    // Ana Sayfa
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
+                        label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { onNavigateToHome(null) }
+                    )
+
+                    // Geçmişim
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.History, contentDescription = "Geçmişim") },
+                        label = { Text("Geçmişim", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToExplore
+                    )
+
+                    // Randevu Al
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.AddCircle, contentDescription = "Randevu Al") },
+                        label = { Text("Randevu Al", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { onNavigateToHome("appointment") }
+                    )
+
+                    // Mesajlarım
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
+                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        selected = true,
+                        onClick = {}
+                    )
+
+                    // Profil
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Person, contentDescription = "Profil") },
+                        label = { Text("Profil", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = { onNavigateToHome("profile") }
+                    )
+                }
             }
         }
     ) { innerPadding ->
@@ -141,7 +183,69 @@ fun DietitianMessagesScreen(
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (viewModel.inboxList.isEmpty() && !viewModel.isLoading) {
+                val isClient = userInfo?.role == "ROLE_USER"
+                val dietitian = userInfo?.dietitian
+                val hasNoMessages = viewModel.inboxList.isEmpty() || viewModel.inboxList.all { it.lastMessage == null }
+
+                if (isClient && hasNoMessages) {
+                    if (dietitian != null) {
+                        Card(
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = GreenPrimary.copy(alpha = 0.05f)),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp)
+                                .clickable {
+                                    viewModel.startChat(dietitian, context)
+                                    showChatDialog = true
+                                },
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(20.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .background(GreenPrimary.copy(alpha = 0.1f), CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(Icons.Default.Chat, contentDescription = "Sohbet Başlat", tint = GreenPrimary)
+                                }
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = dietitian.name ?: "Diyetisyeniniz",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp,
+                                        color = TextDark
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = "Sorularınızı sormak için sohbet başlatın.",
+                                        fontSize = 12.sp,
+                                        color = TextSecondaryDark
+                                    )
+                                }
+                                Icon(Icons.Default.ArrowForward, contentDescription = "Git", tint = GreenPrimary, modifier = Modifier.size(16.dp))
+                            }
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 40.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "Henüz bir diyetisyeniniz bulunmuyor.",
+                                color = TextSecondaryDark,
+                                fontSize = 14.sp
+                             )
+                        }
+                    }
+                } else if (viewModel.inboxList.isEmpty() && !viewModel.isLoading) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -155,7 +259,13 @@ fun DietitianMessagesScreen(
                         )
                     }
                 } else {
-                    viewModel.inboxList.forEach { conversation ->
+                    val listToDisplay = if (isClient) {
+                        viewModel.inboxList.filter { it.lastMessage != null }
+                    } else {
+                        viewModel.inboxList
+                    }
+
+                    listToDisplay.forEach { conversation ->
                         Card(
                             shape = RoundedCornerShape(12.dp),
                             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -167,7 +277,7 @@ fun DietitianMessagesScreen(
                                         id = conversation.partnerId,
                                         email = conversation.partnerEmail ?: "",
                                         name = conversation.partnerName,
-                                        role = "ROLE_USER",
+                                        role = if (isClient) "ROLE_DIETITIAN" else "ROLE_USER",
                                         provider = null,
                                         providerId = null,
                                         height = null,

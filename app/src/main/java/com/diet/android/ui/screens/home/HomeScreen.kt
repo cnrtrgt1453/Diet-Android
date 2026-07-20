@@ -182,6 +182,13 @@ fun HomeScreen(
                         selected = false,
                         onClick = { showAppointmentDialog = true }
                     )
+                    // Mesajlarım
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
+                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        selected = false,
+                        onClick = onNavigateToMessages
+                    )
                 } else if (userInfo?.role == "ROLE_ADMIN" || userInfo?.email == "suhedaterat2@gmail.com") {
                     // Başvurular (Admin için)
                     NavigationBarItem(
