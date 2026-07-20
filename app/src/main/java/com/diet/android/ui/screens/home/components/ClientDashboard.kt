@@ -250,7 +250,7 @@ fun ClientDashboard(
 
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Bugün gerçekten toplam tüketilen su: ${currentTotalWater.toInt()} ml",
+                    text = "Bugün toplam tüketilen su: ${currentTotalWater.toInt()} ml",
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary,

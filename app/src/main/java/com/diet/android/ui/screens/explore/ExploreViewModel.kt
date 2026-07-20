@@ -344,27 +344,33 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
         if (content.isBlank()) return
 
         val ws = webSocket
+        var sentOk = false
         if (ws != null) {
             val payload = JSONObject().apply {
                 put("recipientId", partner.id)
                 put("content", content)
                 put("isBroadcast", false)
             }
-            ws.send(payload.toString())
-            
-            // Optimistic updates for messaging feel
-            val me = userInfo ?: return
-            val optimisticMsg = ChatMessage(
-                id = System.currentTimeMillis(),
-                sender = me,
-                recipient = partner,
-                content = content,
-                isBroadcast = false,
-                isRead = false,
-                sentAt = java.time.LocalDateTime.now().toString()
-            )
-            chatMessages = chatMessages + optimisticMsg
-        } else {
+            sentOk = ws.send(payload.toString())
+            if (sentOk) {
+                // Optimistic updates for messaging feel
+                val me = userInfo ?: return
+                val optimisticMsg = ChatMessage(
+                    id = System.currentTimeMillis(),
+                    sender = me,
+                    recipient = partner,
+                    content = content,
+                    isBroadcast = false,
+                    isRead = false,
+                    sentAt = java.time.LocalDateTime.now().toString()
+                )
+                chatMessages = chatMessages + optimisticMsg
+            } else {
+                android.util.Log.w("ExploreViewModel", "WebSocket send returned false, falling back to HTTP REST API.")
+            }
+        }
+        
+        if (!sentOk) {
             viewModelScope.launch {
                 try {
                     val msg = apiService.sendChatMessage(partner.id, MessageRequest(content))
