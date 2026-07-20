@@ -329,24 +329,14 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
                             if (dataObj != null) {
                                 val msg = Gson().fromJson(dataObj.toString(), ChatMessage::class.java)
                                 val isFromPartner = msg.sender.id == partner.id
-                                val isToPartner = msg.recipient?.id == partner.id
                                 val isBroadcastFromDietitian = msg.isBroadcast &&
                                         userInfo?.role == "ROLE_USER" &&
                                         msg.sender.id == userInfo?.dietitian?.id
 
-                                if (isFromPartner || isToPartner || isBroadcastFromDietitian) {
-                                    val senderIsMe = msg.sender.id == userInfo?.id
-                                    if (senderIsMe) {
-                                        val existingOptimistic = chatMessages.find { it.sender.id == userInfo?.id && it.content == msg.content && it.id > 1000000000000L }
-                                        if (existingOptimistic != null) {
-                                            chatMessages = chatMessages.filter { it.id != existingOptimistic.id } + msg
-                                        } else if (chatMessages.none { it.id == msg.id }) {
-                                            chatMessages = chatMessages + msg
-                                        }
-                                    } else {
-                                        if (chatMessages.none { it.id == msg.id }) {
-                                            chatMessages = chatMessages + msg
-                                        }
+                                // Only add partner's messages via WebSocket; our own messages are added via HTTP REST response
+                                if (isFromPartner || isBroadcastFromDietitian) {
+                                    if (chatMessages.none { it.id == msg.id }) {
+                                        chatMessages = chatMessages + msg
                                     }
                                 }
                             }
@@ -375,42 +365,36 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
         val partner = chatWithUser ?: return
         if (content.isBlank()) return
 
+        // Always save to DB via HTTP REST (ensures persistence)
+        viewModelScope.launch {
+            try {
+                val msg = apiService.sendChatMessage(partner.id, MessageRequest(content))
+                // Replace any optimistic message or add confirmed one
+                val existingOptimistic = chatMessages.find {
+                    it.sender.id == userInfo?.id && it.content == content && it.id > 1000000000000L
+                }
+                chatMessages = if (existingOptimistic != null) {
+                    chatMessages.filter { it.id != existingOptimistic.id } + msg
+                } else if (chatMessages.none { it.id == msg.id }) {
+                    chatMessages + msg
+                } else {
+                    chatMessages
+                }
+            } catch (e: Exception) {
+                _uiEvent.emit(ExploreUiEvent.Error("Mesaj gönderilemedi: ${e.localizedMessage}"))
+                return@launch
+            }
+        }
+
+        // Also send via WebSocket for real-time delivery to partner (fire-and-forget)
         val ws = webSocket
-        var sentOk = false
         if (ws != null && isWebSocketConnected) {
             val payload = JSONObject().apply {
                 put("recipientId", partner.id)
                 put("content", content)
                 put("isBroadcast", false)
             }
-            sentOk = ws.send(payload.toString())
-            if (sentOk) {
-                // Optimistic updates for messaging feel
-                val me = userInfo ?: return
-                val optimisticMsg = ChatMessage(
-                    id = System.currentTimeMillis(),
-                    sender = me,
-                    recipient = partner,
-                    content = content,
-                    isBroadcast = false,
-                    isRead = false,
-                    sentAt = java.time.LocalDateTime.now().toString()
-                )
-                chatMessages = chatMessages + optimisticMsg
-            } else {
-                android.util.Log.w("ExploreViewModel", "WebSocket send returned false, falling back to HTTP REST API.")
-            }
-        }
-        
-        if (!sentOk) {
-            viewModelScope.launch {
-                try {
-                    val msg = apiService.sendChatMessage(partner.id, MessageRequest(content))
-                    chatMessages = chatMessages + msg
-                } catch (e: Exception) {
-                    _uiEvent.emit(ExploreUiEvent.Error("Mesaj gönderilemedi: ${e.localizedMessage}"))
-                }
-            }
+            ws.send(payload.toString())
         }
     }
 
