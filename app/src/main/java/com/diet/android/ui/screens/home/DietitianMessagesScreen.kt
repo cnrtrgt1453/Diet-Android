@@ -45,6 +45,7 @@ fun DietitianMessagesScreen(
     var showChatDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        viewModel.loadInitialData(context)
         viewModel.loadInbox()
     }
 
