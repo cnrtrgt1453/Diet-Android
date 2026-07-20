@@ -70,6 +70,8 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
         private set
     var chatMessages by mutableStateOf<List<ChatMessage>>(emptyList())
         private set
+    var isWebSocketConnected by mutableStateOf(false)
+        private set
     var pastMonthChatMessages by mutableStateOf<List<ChatMessage>>(emptyList())
         private set
     var inboxList by mutableStateOf<List<ConversationSummary>>(emptyList())
@@ -296,6 +298,7 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
     fun startChat(partner: UserInfo, context: Context) {
         chatWithUser = partner
         chatMessages = emptyList()
+        isWebSocketConnected = false
         val token = ApiClient.getSavedToken(context) ?: return
 
         viewModelScope.launch {
@@ -311,6 +314,12 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
         val request = Request.Builder().url(wsUrl).build()
 
         webSocket = okHttpClient.newWebSocket(request, object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
+                super.onOpen(webSocket, response)
+                isWebSocketConnected = true
+                android.util.Log.i("ExploreViewModel", "WebSocket connection opened successfully.")
+            }
+
             override fun onMessage(webSocket: WebSocket, text: String) {
                 viewModelScope.launch(Dispatchers.Main) {
                     try {
@@ -351,11 +360,13 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
                 super.onFailure(webSocket, t, response)
                 android.util.Log.e("ExploreViewModel", "WebSocket failure: ${t.localizedMessage}", t)
                 this@ExploreViewModel.webSocket = null
+                isWebSocketConnected = false
             }
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 super.onClosed(webSocket, code, reason)
                 this@ExploreViewModel.webSocket = null
+                isWebSocketConnected = false
             }
         })
     }
@@ -366,7 +377,7 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
 
         val ws = webSocket
         var sentOk = false
-        if (ws != null) {
+        if (ws != null && isWebSocketConnected) {
             val payload = JSONObject().apply {
                 put("recipientId", partner.id)
                 put("content", content)
@@ -406,6 +417,7 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
     fun endChat() {
         webSocket?.close(1000, "Goodbye")
         webSocket = null
+        isWebSocketConnected = false
         chatWithUser = null
         chatMessages = emptyList()
         reloadInitialData()
