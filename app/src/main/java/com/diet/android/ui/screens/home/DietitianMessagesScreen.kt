@@ -72,7 +72,7 @@ fun DietitianMessagesScreen(
             val titleText = if (isClient && dietitian != null) {
                 dietitian.name ?: "Diyetisyenim"
             } else {
-                "Mesajlarım"
+                "Mesajlar"
             }
             TopAppBar(
                 title = { Text(titleText, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold, fontSize = 18.sp) },
@@ -123,16 +123,16 @@ fun DietitianMessagesScreen(
 
                     // Mesajlarım
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
-                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlar") },
+                        label = { Text("Mesajlar", fontWeight = FontWeight.Medium) },
                         selected = true,
                         onClick = {}
                     )
 
                     // Klinik Analitiği
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Analytics, contentDescription = "Analizler") },
-                        label = { Text("Analizler", fontWeight = FontWeight.Medium) },
+                        icon = { Icon(Icons.Default.Analytics, contentDescription = "Analiz") },
+                        label = { Text("Analiz", fontWeight = FontWeight.Medium) },
                         selected = false,
                         onClick = {
                             viewModel.endChat()
@@ -186,8 +186,8 @@ fun DietitianMessagesScreen(
 
                     // Mesajlarım
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
-                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlar") },
+                        label = { Text("Mesajlar", fontWeight = FontWeight.Medium) },
                         selected = true,
                         onClick = {}
                     )

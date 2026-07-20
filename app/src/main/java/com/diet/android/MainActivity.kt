@@ -21,6 +21,7 @@ import com.diet.android.ui.screens.home.HomeScreen
 import com.diet.android.ui.screens.home.AvailabilitySlotsScreen
 import com.diet.android.ui.screens.home.AnalyticsScreen
 import com.diet.android.ui.screens.home.DietitianMessagesScreen
+import com.diet.android.ui.screens.home.NotificationsScreen
 import com.diet.android.ui.screens.home.HomeViewModel
 import com.diet.android.ui.screens.home.HomeViewModelFactory
 import com.diet.android.ui.screens.explore.ExploreScreen
@@ -204,6 +205,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                         navController.navigate("profile") {
                             launchSingleTop = true
                         }
+                    },
+                    onNavigateToNotifications = {
+                        navController.navigate("notifications") {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -376,6 +382,17 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 ProfileEditScreen(
                     viewModel = homeViewModel,
                     onNavigateBack = { navController.popBackStack() }
+                )
+            }
+            composable("notifications") {
+                NotificationsScreen(
+                    viewModel = homeViewModel,
+                    onNavigateBack = {
+                        navController.navigate("home") {
+                            popUpTo("home") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
         }

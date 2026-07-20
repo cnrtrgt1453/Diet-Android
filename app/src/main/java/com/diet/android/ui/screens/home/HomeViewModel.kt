@@ -286,13 +286,14 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
     }
 
     fun loadClinicAnalytics() {
+        if (userInfo?.role != "ROLE_DIETITIAN") return
         viewModelScope.launch {
             try {
                 cohortsData = apiService.getCohortAnalysis()
                 complianceData = apiService.getCategoryCompliance()
                 weightLossRates = apiService.getClientWeightLossRates()
             } catch (e: Exception) {
-                // Silently fail
+                // Silently fail - data not available
             }
         }
     }

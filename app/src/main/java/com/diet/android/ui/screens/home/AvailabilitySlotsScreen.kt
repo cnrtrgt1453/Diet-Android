@@ -136,15 +136,15 @@ fun AvailabilitySlotsScreen(
                     )
                     // Mesajlarım
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlarım") },
-                        label = { Text("Mesajlarım", fontWeight = FontWeight.Medium) },
+                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlar") },
+                        label = { Text("Mesajlar", fontWeight = FontWeight.Medium) },
                         selected = false,
                         onClick = onNavigateToMessages
                     )
                     // Klinik Analitiği
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Analytics, contentDescription = "Analizler") },
-                        label = { Text("Analizler", fontWeight = FontWeight.Medium) },
+                        icon = { Icon(Icons.Default.Analytics, contentDescription = "Analiz") },
+                        label = { Text("Analiz", fontWeight = FontWeight.Medium) },
                         selected = false,
                         onClick = onNavigateToAnalytics
                     )
