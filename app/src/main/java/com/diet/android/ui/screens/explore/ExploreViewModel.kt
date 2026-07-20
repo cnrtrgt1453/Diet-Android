@@ -106,10 +106,18 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
                     clients = loadedClients
                     filteredClients = loadedClients
                 } else {
-                    myMeasurements = apiService.getClientMeasurements(me.id)
-                    myDiets = apiService.getClientDiets(me.id)
                     try {
-                        myDailyLogs = apiService.getClientDailyLogs(me.id)
+                        myMeasurements = apiService.getClientMeasurements(me.id)
+                    } catch (e: Exception) {
+                        myMeasurements = emptyList()
+                    }
+                    try {
+                        myDiets = apiService.getClientDiets(me.id)
+                    } catch (e: Exception) {
+                        myDiets = emptyList()
+                    }
+                    try {
+                        myDailyLogs = apiService.getMyDailyLogs(null, null)
                     } catch (e: Exception) {
                         myDailyLogs = emptyList()
                     }
@@ -151,10 +159,18 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
                     clients = loadedClients
                     filteredClients = loadedClients
                 } else {
-                    myMeasurements = apiService.getClientMeasurements(me.id)
-                    myDiets = apiService.getClientDiets(me.id)
                     try {
-                        myDailyLogs = apiService.getClientDailyLogs(me.id)
+                        myMeasurements = apiService.getClientMeasurements(me.id)
+                    } catch (e: Exception) {
+                        myMeasurements = emptyList()
+                    }
+                    try {
+                        myDiets = apiService.getClientDiets(me.id)
+                    } catch (e: Exception) {
+                        myDiets = emptyList()
+                    }
+                    try {
+                        myDailyLogs = apiService.getMyDailyLogs(null, null)
                     } catch (e: Exception) {
                         myDailyLogs = emptyList()
                     }
