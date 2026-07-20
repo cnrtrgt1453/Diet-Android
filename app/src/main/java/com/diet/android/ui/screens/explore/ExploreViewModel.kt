@@ -336,6 +336,16 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
                     }
                 }
             }
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
+                super.onFailure(webSocket, t, response)
+                android.util.Log.e("ExploreViewModel", "WebSocket failure: ${t.localizedMessage}", t)
+                this@ExploreViewModel.webSocket = null
+            }
+
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                super.onClosed(webSocket, code, reason)
+                this@ExploreViewModel.webSocket = null
+            }
         })
     }
 
