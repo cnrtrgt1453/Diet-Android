@@ -220,7 +220,7 @@ fun ClientDashboard(
                 }
 
                 val isToday = viewModel.todayDailyLog?.date == java.time.LocalDate.now().toString()
-                val currentTotalWater = if (isToday) viewModel.todayDailyLog?.waterIntakeMl ?: 0 else 0
+                val currentTotalWater = if (isToday) viewModel.todayDailyLog?.waterIntakeMl ?: 0.0 else 0.0
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
@@ -250,7 +250,7 @@ fun ClientDashboard(
 
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Bugün gerçekten toplam tüketilen su: $currentTotalWater ml",
+                    text = "Bugün gerçekten toplam tüketilen su: ${currentTotalWater.toInt()} ml",
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary,
