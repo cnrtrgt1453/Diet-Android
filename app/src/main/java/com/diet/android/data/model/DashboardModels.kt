@@ -131,7 +131,8 @@ data class ConversationSummary(
     val partnerCategory: String?,
     val lastMessage: String?,
     val lastMessageSentAt: String?,
-    val unreadCount: Long
+    val unreadCount: Long,
+    val profilePictureUrl: String? = null
 )
 
 data class DietitianAvailability(

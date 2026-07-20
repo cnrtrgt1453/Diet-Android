@@ -29,6 +29,8 @@ import com.diet.android.ui.screens.explore.ExploreUiEvent
 import com.diet.android.ui.screens.explore.ExploreViewModel
 import com.diet.android.ui.theme.*
 import kotlinx.coroutines.flow.collectLatest
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -213,86 +215,19 @@ fun DietitianMessagesScreen(
                 .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            if (isClient) {
-                if (dietitian != null) {
-                    LaunchedEffect(dietitian) {
-                        viewModel.startChat(dietitian, context)
-                    }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    var clientMessageText by remember { mutableStateOf("") }
-
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        // Message List
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(12.dp)
-                                .verticalScroll(rememberScrollState(), reverseScrolling = true),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            viewModel.chatMessages.forEach { msg ->
-                                val isMe = msg.sender.id == userInfo?.id
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = if (isMe) Arrangement.End else Arrangement.Start
-                                ) {
-                                    Card(
-                                        shape = RoundedCornerShape(
-                                            topStart = 12.dp,
-                                            topEnd = 12.dp,
-                                            bottomStart = if (isMe) 12.dp else 0.dp,
-                                            bottomEnd = if (isMe) 0.dp else 12.dp
-                                        ),
-                                        colors = CardDefaults.cardColors(
-                                            containerColor = if (isMe) GreenPrimary else Color.White
-                                        ),
-                                        modifier = Modifier.widthIn(max = 280.dp),
-                                        border = if (isMe) null else androidx.compose.foundation.BorderStroke(1.dp, Color.LightGray)
-                                    ) {
-                                        Column(modifier = Modifier.padding(10.dp)) {
-                                            Text(msg.content, color = if (isMe) Color.White else TextDark, fontSize = 14.sp)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // Message Input Field
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.White)
-                                .padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            OutlinedTextField(
-                                value = clientMessageText,
-                                onValueChange = { clientMessageText = it },
-                                placeholder = { Text("Mesajınızı yazın...") },
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(20.dp),
-                                maxLines = 3
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Button(
-                                onClick = {
-                                    if (clientMessageText.isNotBlank()) {
-                                        viewModel.sendChatMessage(clientMessageText)
-                                        clientMessageText = ""
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
-                                shape = RoundedCornerShape(20.dp)
-                            ) {
-                                Text("Gönder", color = Color.White)
-                            }
-                        }
-                    }
-                } else {
+                if (isClient && dietitian == null) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(24.dp),
+                            .padding(vertical = 40.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -301,76 +236,79 @@ fun DietitianMessagesScreen(
                             fontSize = 14.sp
                         )
                     }
-                }
-            } else {
-                // Dietitian UI: List of Conversations (Clients)
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    if (viewModel.inboxList.isEmpty() && !viewModel.isLoading) {
-                        Box(
+                } else if (viewModel.inboxList.isEmpty() && !viewModel.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 40.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "Henüz aktif bir mesajlaşma bulunmuyor.",
+                            color = TextSecondaryDark,
+                            fontSize = 14.sp
+                        )
+                    }
+                } else {
+                    viewModel.inboxList.forEach { conversation ->
+                        Card(
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 40.dp),
-                            contentAlignment = Alignment.Center
+                                .padding(vertical = 6.dp)
+                                .clickable {
+                                    val partnerUserInfo = UserInfo(
+                                        id = conversation.partnerId,
+                                        email = conversation.partnerEmail ?: "",
+                                        name = conversation.partnerName,
+                                        role = if (isClient) "ROLE_DIETITIAN" else "ROLE_USER",
+                                        provider = null,
+                                        providerId = null,
+                                        height = null,
+                                        currentWeight = null,
+                                        targetWeight = null,
+                                        category = conversation.partnerCategory,
+                                        notes = null,
+                                        glp1InjectionDay = null,
+                                        glp1Dosage = null,
+                                        lipedemaStage = null,
+                                        antiInflammatoryCompliant = null,
+                                        hormoneTargetCycle = null,
+                                        dietitianApplicationStatus = null,
+                                        dietitianRejectionReason = null,
+                                        instagramUrl = null,
+                                        linkedinUrl = null,
+                                        youtubeUrl = null,
+                                        profilePictureUrl = conversation.profilePictureUrl,
+                                        fcmToken = null
+                                    )
+                                    viewModel.startChat(partnerUserInfo, context)
+                                    showChatDialog = true
+                                },
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                         ) {
-                            Text(
-                                "Henüz aktif bir mesajlaşma bulunmuyor.",
-                                color = TextSecondaryDark,
-                                fontSize = 14.sp
-                            )
-                        }
-                    } else {
-                        viewModel.inboxList.forEach { conversation ->
-                            Card(
-                                shape = RoundedCornerShape(12.dp),
-                                colors = CardDefaults.cardColors(containerColor = Color.White),
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 6.dp)
-                                    .clickable {
-                                        val partnerUserInfo = UserInfo(
-                                            id = conversation.partnerId,
-                                            email = conversation.partnerEmail ?: "",
-                                            name = conversation.partnerName,
-                                            role = "ROLE_USER",
-                                            provider = null,
-                                            providerId = null,
-                                            height = null,
-                                            currentWeight = null,
-                                            targetWeight = null,
-                                            category = conversation.partnerCategory,
-                                            notes = null,
-                                            glp1InjectionDay = null,
-                                            glp1Dosage = null,
-                                            lipedemaStage = null,
-                                            antiInflammatoryCompliant = null,
-                                            hormoneTargetCycle = null,
-                                            dietitianApplicationStatus = null,
-                                            dietitianRejectionReason = null,
-                                            instagramUrl = null,
-                                            linkedinUrl = null,
-                                            youtubeUrl = null,
-                                            profilePictureUrl = null,
-                                            fcmToken = null
-                                        )
-                                        viewModel.startChat(partnerUserInfo, context)
-                                        showChatDialog = true
-                                    },
-                                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    // Avatar Placeholder
+                                // Avatar Placeholder or Profile Picture
+                                if (!conversation.profilePictureUrl.isNullOrBlank()) {
+                                    Card(
+                                        shape = CircleShape,
+                                        modifier = Modifier.size(48.dp),
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                                    ) {
+                                        AsyncImage(
+                                            model = conversation.profilePictureUrl,
+                                            contentDescription = "Profil Resmi",
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
+                                } else {
                                     Box(
                                         modifier = Modifier
                                             .size(48.dp)
@@ -384,67 +322,67 @@ fun DietitianMessagesScreen(
                                             fontSize = 18.sp
                                         )
                                     }
+                                }
 
-                                    Spacer(modifier = Modifier.width(14.dp))
+                                Spacer(modifier = Modifier.width(14.dp))
 
-                                    // Main Text Content
-                                    Column(
-                                        modifier = Modifier.weight(1f)
+                                // Main Text Content
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = conversation.partnerName ?: "Danışan",
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 15.sp,
-                                                color = TextDark
-                                            )
+                                        Text(
+                                            text = conversation.partnerName ?: "Diyetisyen",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 15.sp,
+                                            color = TextDark
+                                        )
 
-                                            // Time tag
-                                            if (conversation.lastMessageSentAt != null) {
-                                                Text(
-                                                    text = conversation.lastMessageSentAt.substringAfter("T").take(5),
-                                                    fontSize = 11.sp,
-                                                    color = Color.Gray
-                                                )
-                                            }
+                                        // Time tag
+                                        if (conversation.lastMessageSentAt != null) {
+                                            Text(
+                                                text = conversation.lastMessageSentAt.substringAfter("T").take(5),
+                                                fontSize = 11.sp,
+                                                color = Color.Gray
+                                            )
                                         }
+                                    }
 
-                                        Spacer(modifier = Modifier.height(2.dp))
+                                    Spacer(modifier = Modifier.height(2.dp))
 
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = conversation.lastMessage ?: "Henüz mesaj gönderilmedi",
-                                                fontSize = 13.sp,
-                                                color = if (conversation.unreadCount > 0) Color.Black else TextSecondaryDark,
-                                                fontWeight = if (conversation.unreadCount > 0) FontWeight.Bold else FontWeight.Normal,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis,
-                                                modifier = Modifier.weight(1f)
-                                            )
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = conversation.lastMessage ?: "Henüz mesaj gönderilmedi",
+                                            fontSize = 13.sp,
+                                            color = if (conversation.unreadCount > 0) Color.Black else TextSecondaryDark,
+                                            fontWeight = if (conversation.unreadCount > 0) FontWeight.Bold else FontWeight.Normal,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            modifier = Modifier.weight(1f)
+                                        )
 
-                                            if (conversation.unreadCount > 0) {
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                Box(
-                                                    modifier = Modifier
-                                                        .size(20.dp)
-                                                        .background(Color(0xFF2E7D32), CircleShape),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    Text(
-                                                        text = conversation.unreadCount.toString(),
-                                                        color = Color.White,
-                                                        fontSize = 10.sp,
-                                                        fontWeight = FontWeight.Bold
-                                                    )
-                                                }
+                                        if (conversation.unreadCount > 0) {
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(20.dp)
+                                                    .background(Color(0xFF2E7D32), CircleShape),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = conversation.unreadCount.toString(),
+                                                    color = Color.White,
+                                                    fontSize = 10.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
                                             }
                                         }
                                     }
@@ -468,7 +406,7 @@ fun DietitianMessagesScreen(
         }
     }
 
-    // Chat Dialog for Dietitian
+    // Chat Dialog
     if (showChatDialog && viewModel.chatWithUser != null) {
         val partner = viewModel.chatWithUser!!
         var messageText by remember { mutableStateOf("") }
@@ -495,9 +433,42 @@ fun DietitianMessagesScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Column {
-                            Text(partner.name ?: "Sohbet", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Text("Çevrimiçi (WebSocket aktif)", color = Color.White.copy(alpha = 0.7f), fontSize = 11.sp)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (!partner.profilePictureUrl.isNullOrBlank()) {
+                                Card(
+                                    shape = CircleShape,
+                                    modifier = Modifier.size(40.dp),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                                ) {
+                                    AsyncImage(
+                                        model = partner.profilePictureUrl,
+                                        contentDescription = "Profil Resmi",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .background(Color.White.copy(alpha = 0.2f), CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = (partner.name?.take(1) ?: "D"),
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(partner.name ?: "Sohbet", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text("Çevrimiçi (WebSocket aktif)", color = Color.White.copy(alpha = 0.7f), fontSize = 11.sp)
+                            }
                         }
                         TextButton(
                             onClick = {
