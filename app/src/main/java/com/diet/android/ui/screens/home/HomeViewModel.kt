@@ -65,6 +65,8 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
         private set
     var weightLossRates by mutableStateOf<List<ClientWeightLossRateDto>>(emptyList())
         private set
+    var unreadMessagesCount by mutableStateOf(0L)
+        private set
 
     private val _uiEvent = MutableSharedFlow<HomeUiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
@@ -211,6 +213,18 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
             try {
                 notifications = apiService.getMyNotifications()
                 unreadCount = apiService.getUnreadCount()
+            } catch (e: Exception) {
+                // Silently fail
+            }
+        }
+        loadUnreadMessagesCount()
+    }
+
+    fun loadUnreadMessagesCount() {
+        viewModelScope.launch {
+            try {
+                val inbox = apiService.getInbox()
+                unreadMessagesCount = inbox.sumOf { it.unreadCount }
             } catch (e: Exception) {
                 // Silently fail
             }

@@ -77,6 +77,9 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
     var inboxList by mutableStateOf<List<ConversationSummary>>(emptyList())
         private set
 
+    val unreadMessagesCount: Long
+        get() = inboxList.sumOf { it.unreadCount }
+
     fun loadInbox() {
         isLoading = true
         viewModelScope.launch {
@@ -141,6 +144,13 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
                     } else {
                         pastMonthChatMessages = emptyList()
                     }
+                }
+                
+                // Load inbox so unread messages count is available for the tab bar badge
+                try {
+                    inboxList = apiService.getInbox()
+                } catch (e: Exception) {
+                    // Silently fail
                 }
             } catch (e: Exception) {
                 _uiEvent.emit(ExploreUiEvent.Error("Veriler yüklenemedi: ${e.localizedMessage}"))

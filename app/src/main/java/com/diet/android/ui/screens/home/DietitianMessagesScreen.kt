@@ -123,7 +123,27 @@ fun DietitianMessagesScreen(
 
                     // Mesajlarım
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlar") },
+                        icon = {
+                            Box(contentAlignment = Alignment.TopEnd) {
+                                Icon(Icons.Default.Email, contentDescription = "Mesajlar")
+                                if (viewModel.unreadMessagesCount > 0) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .offset(x = 6.dp, y = (-4).dp)
+                                            .background(MaterialTheme.colorScheme.error, RoundedCornerShape(8.dp)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = viewModel.unreadMessagesCount.toString(),
+                                            color = MaterialTheme.colorScheme.onError,
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+                        },
                         label = { Text("Mesajlar", fontWeight = FontWeight.Medium) },
                         selected = true,
                         onClick = {}
@@ -186,7 +206,27 @@ fun DietitianMessagesScreen(
 
                     // Mesajlarım
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Email, contentDescription = "Mesajlar") },
+                        icon = {
+                            Box(contentAlignment = Alignment.TopEnd) {
+                                Icon(Icons.Default.Email, contentDescription = "Mesajlar")
+                                if (viewModel.unreadMessagesCount > 0) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .offset(x = 6.dp, y = (-4).dp)
+                                            .background(MaterialTheme.colorScheme.error, RoundedCornerShape(8.dp)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = viewModel.unreadMessagesCount.toString(),
+                                            color = MaterialTheme.colorScheme.onError,
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+                        },
                         label = { Text("Mesajlar", fontWeight = FontWeight.Medium) },
                         selected = true,
                         onClick = {}
