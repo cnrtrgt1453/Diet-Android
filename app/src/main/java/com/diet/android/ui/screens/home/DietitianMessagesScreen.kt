@@ -90,8 +90,8 @@ fun DietitianMessagesScreen(
                 if (userInfo?.role == "ROLE_DIETITIAN") {
                     // Ana Sayfa
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
-                        label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Anasayfa") },
+                        label = { Text("Anasayfa", fontWeight = FontWeight.Medium, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1) },
                         selected = false,
                         onClick = {
                             viewModel.endChat()
@@ -153,8 +153,8 @@ fun DietitianMessagesScreen(
                 } else if (userInfo?.role == "ROLE_USER") {
                     // Ana Sayfa
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
-                        label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Anasayfa") },
+                        label = { Text("Anasayfa", fontWeight = FontWeight.Medium, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1) },
                         selected = false,
                         onClick = {
                             viewModel.endChat()

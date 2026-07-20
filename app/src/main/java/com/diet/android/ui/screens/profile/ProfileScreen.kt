@@ -40,7 +40,8 @@ fun ProfileScreen(
     onNavigateToSlots: () -> Unit,
     onNavigateToMessages: () -> Unit,
     onNavigateToAnalytics: () -> Unit,
-    onNavigateToProfileEdit: () -> Unit
+    onNavigateToProfileEdit: () -> Unit,
+    onLogout: () -> Unit
 ) {
     val context = LocalContext.current
     val userInfo = viewModel.userInfo ?: return
@@ -83,8 +84,8 @@ fun ProfileScreen(
             ) {
                 // Ana Sayfa
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
-                    label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
+                    icon = { Icon(Icons.Default.Home, contentDescription = "Anasayfa") },
+                    label = { Text("Anasayfa", fontWeight = FontWeight.Medium, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1) },
                     selected = false,
                     onClick = { onNavigateToHome(null) }
                 )
@@ -278,6 +279,30 @@ fun ProfileScreen(
                     Text(
                         text = "Profili Düzenle",
                         color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedButton(
+                    onClick = onLogout,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFEF4444)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEF4444)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ExitToApp,
+                        contentDescription = "Çıkış Yap",
+                        tint = Color(0xFFEF4444)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Çıkış Yap",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp
                     )

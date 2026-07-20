@@ -22,7 +22,8 @@ import com.diet.android.ui.theme.*
 fun ProfileEditDialog(
     visible: Boolean,
     onClose: () -> Unit,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    onLogout: () -> Unit
 ) {
     if (!visible) return
 
@@ -250,6 +251,21 @@ fun ProfileEditDialog(
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text("Kaydet", color = Color.White)
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedButton(
+                    onClick = {
+                        onClose()
+                        onLogout()
+                    },
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFEF4444)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEF4444)),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Çıkış Yap", color = Color(0xFFEF4444))
                 }
             }
         }

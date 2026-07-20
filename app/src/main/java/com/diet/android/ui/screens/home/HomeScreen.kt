@@ -113,10 +113,6 @@ fun HomeScreen(
                     }
 
                     Spacer(modifier = Modifier.width(4.dp))
-
-                    TextButton(onClick = onLogout) {
-                        Text("Çıkış Yap", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
-                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -132,8 +128,8 @@ fun HomeScreen(
             ) {
                 // Ana Sayfa (Tüm roller için ortak)
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
-                    label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
+                    icon = { Icon(Icons.Default.Home, contentDescription = "Anasayfa") },
+                    label = { Text("Anasayfa", fontWeight = FontWeight.Medium, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1) },
                     selected = true,
                     onClick = {}
                 )
@@ -277,7 +273,8 @@ fun HomeScreen(
             ProfileEditDialog(
                 visible = showProfileEditDialog,
                 onClose = { showProfileEditDialog = false },
-                viewModel = viewModel
+                viewModel = viewModel,
+                onLogout = onLogout
             )
         }
     }

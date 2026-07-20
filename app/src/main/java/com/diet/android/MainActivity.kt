@@ -375,6 +375,12 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                         navController.navigate("profile_edit") {
                             launchSingleTop = true
                         }
+                    },
+                    onLogout = {
+                        ApiClient.clearToken(navController.context)
+                        navController.navigate("login") {
+                            popUpTo(0)
+                        }
                     }
                 )
             }

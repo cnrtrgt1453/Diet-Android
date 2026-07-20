@@ -110,8 +110,8 @@ fun AvailabilitySlotsScreen(
             ) {
                 // Ana Sayfa (Tüm roller için ortak)
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Ana Sayfa") },
-                    label = { Text("Ana Sayfa", fontWeight = FontWeight.Medium) },
+                    icon = { Icon(Icons.Default.Home, contentDescription = "Anasayfa") },
+                    label = { Text("Anasayfa", fontWeight = FontWeight.Medium, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1) },
                     selected = false,
                     onClick = { onNavigateToHome(null) }
                 )
