@@ -303,6 +303,7 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
                 chatMessages = apiService.getChatHistory(partner.id)
             } catch (e: Exception) {
                 e.printStackTrace()
+                _uiEvent.emit(ExploreUiEvent.Error("Sohbet geçmişi yüklenemedi: ${e.localizedMessage}"))
             }
         }
 
@@ -325,8 +326,18 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
                                         msg.sender.id == userInfo?.dietitian?.id
 
                                 if (isFromPartner || isToPartner || isBroadcastFromDietitian) {
-                                    if (chatMessages.none { it.id == msg.id }) {
-                                        chatMessages = chatMessages + msg
+                                    val senderIsMe = msg.sender.id == userInfo?.id
+                                    if (senderIsMe) {
+                                        val existingOptimistic = chatMessages.find { it.sender.id == userInfo?.id && it.content == msg.content && it.id > 1000000000000L }
+                                        if (existingOptimistic != null) {
+                                            chatMessages = chatMessages.filter { it.id != existingOptimistic.id } + msg
+                                        } else if (chatMessages.none { it.id == msg.id }) {
+                                            chatMessages = chatMessages + msg
+                                        }
+                                    } else {
+                                        if (chatMessages.none { it.id == msg.id }) {
+                                            chatMessages = chatMessages + msg
+                                        }
                                     }
                                 }
                             }
