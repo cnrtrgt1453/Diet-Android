@@ -69,6 +69,9 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
     val homeViewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(apiService)
     )
+    val exploreViewModel: ExploreViewModel = viewModel(
+        factory = ExploreViewModelFactory(apiService)
+    )
 
     LaunchedEffect(Unit) {
         val context = navController.context
@@ -205,9 +208,6 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 )
             }
             composable("explore") {
-                val exploreViewModel: ExploreViewModel = viewModel(
-                    factory = ExploreViewModelFactory(apiService)
-                )
                 ExploreScreen(
                     viewModel = exploreViewModel,
                     onNavigateToHome = { dialog ->
@@ -240,9 +240,6 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 )
             }
             composable("messages") {
-                val exploreViewModel: ExploreViewModel = viewModel(
-                    factory = ExploreViewModelFactory(apiService)
-                )
                 DietitianMessagesScreen(
                     viewModel = exploreViewModel,
                     onNavigateToHome = { dialog ->
