@@ -52,6 +52,7 @@ fun ProfileEditScreen(
     var facebookUrl by remember { mutableStateOf(user.facebookUrl ?: "") }
 
     // Client fields
+    var profilePictureUrl by remember(user.profilePictureUrl) { mutableStateOf(user.profilePictureUrl ?: "") }
     var height by remember { mutableStateOf(user.height?.toString() ?: "") }
     var currentWeight by remember { mutableStateOf(user.currentWeight?.toString() ?: "") }
     var targetWeight by remember { mutableStateOf(user.targetWeight?.toString() ?: "") }
@@ -113,8 +114,8 @@ fun ProfileEditScreen(
                         .size(110.dp)
                         .clickable { photoPickerLauncher.launch("image/*") }
                 ) {
-                    val imageModel = if (!user.profilePictureUrl.isNullOrBlank()) {
-                        user.profilePictureUrl
+                    val imageModel = if (profilePictureUrl.isNotBlank()) {
+                        profilePictureUrl
                     } else {
                         "https://images.unsplash.com/photo-1594824813573-246434de83fb?q=80&w=256&auto=format&fit=crop"
                     }
@@ -152,6 +153,14 @@ fun ProfileEditScreen(
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center
+                )
+
+                OutlinedTextField(
+                    value = profilePictureUrl,
+                    onValueChange = { profilePictureUrl = it },
+                    label = { Text("Profil Fotoğrafı URL (İsteğe Bağlı)") },
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    singleLine = true
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -339,7 +348,7 @@ fun ProfileEditScreen(
                                 youtubeUrl = if (isDietitian) youtubeUrl.ifEmpty { null } else null,
                                 xUrl = if (isDietitian) xUrl.ifEmpty { null } else null,
                                 facebookUrl = if (isDietitian) facebookUrl.ifEmpty { null } else null,
-                                profilePictureUrl = user.profilePictureUrl, // keep existing URL, as photo was already uploaded & set separately
+                                profilePictureUrl = profilePictureUrl.ifEmpty { null },
                                 height = if (isDietitian) user.height else height.toDoubleOrNull(),
                                 currentWeight = if (isDietitian) user.currentWeight else currentWeight.toDoubleOrNull(),
                                 targetWeight = if (isDietitian) user.targetWeight else targetWeight.toDoubleOrNull(),
