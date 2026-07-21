@@ -77,8 +77,30 @@ class ExploreViewModel(private val apiService: ApiService) : ViewModel() {
     var inboxList by mutableStateOf<List<ConversationSummary>>(emptyList())
         private set
 
+    var hiddenPartnerIds by mutableStateOf<Set<Long>>(emptySet())
+        private set
+
+    val visibleInboxList: List<ConversationSummary>
+        get() = inboxList.filter { it.partnerId !in hiddenPartnerIds }
+
     val unreadMessagesCount: Long
-        get() = inboxList.sumOf { it.unreadCount }
+        get() = visibleInboxList.sumOf { it.unreadCount }
+
+    fun hideConversation(partnerId: Long) {
+        hiddenPartnerIds = hiddenPartnerIds + partnerId
+    }
+
+    fun markConversationAsRead(partnerId: Long) {
+        inboxList = inboxList.map { conv ->
+            if (conv.partnerId == partnerId) conv.copy(unreadCount = 0) else conv
+        }
+    }
+
+    fun markConversationAsUnread(partnerId: Long) {
+        inboxList = inboxList.map { conv ->
+            if (conv.partnerId == partnerId) conv.copy(unreadCount = maxOf(1L, conv.unreadCount)) else conv
+        }
+    }
 
     fun loadInbox() {
         isLoading = true

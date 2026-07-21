@@ -95,10 +95,10 @@ fun ExploreScreen(
                 )
 
                 if (isDietitian) {
-                    // Danışanlar
+                    // Danışan
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.People, contentDescription = "Danışanlar") },
-                        label = { Text("Danışanlar", fontWeight = FontWeight.Medium) },
+                        icon = { Icon(Icons.Default.People, contentDescription = "Danışan") },
+                        label = { Text("Danışan", fontWeight = FontWeight.Medium) },
                         selected = true,
                         onClick = {}
                     )

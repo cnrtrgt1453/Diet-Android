@@ -99,10 +99,10 @@ fun DietitianMessagesScreen(
                         }
                     )
 
-                    // Danışanlar
+                    // Danışan
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.People, contentDescription = "Danışanlar") },
-                        label = { Text("Danışanlar", fontWeight = FontWeight.Medium) },
+                        icon = { Icon(Icons.Default.People, contentDescription = "Danışan") },
+                        label = { Text("Danışan", fontWeight = FontWeight.Medium) },
                         selected = false,
                         onClick = {
                             viewModel.endChat()
@@ -276,7 +276,7 @@ fun DietitianMessagesScreen(
                             fontSize = 14.sp
                         )
                     }
-                } else if (viewModel.inboxList.isEmpty() && !viewModel.isLoading) {
+                } else if (viewModel.visibleInboxList.isEmpty() && !viewModel.isLoading) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -290,7 +290,9 @@ fun DietitianMessagesScreen(
                         )
                     }
                 } else {
-                    viewModel.inboxList.forEach { conversation ->
+                    viewModel.visibleInboxList.forEach { conversation ->
+                        var menuExpanded by remember { mutableStateOf(false) }
+
                         Card(
                             shape = RoundedCornerShape(12.dp),
                             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -425,6 +427,58 @@ fun DietitianMessagesScreen(
                                                 )
                                             }
                                         }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.width(4.dp))
+
+                                // Hamburger / Options Menu
+                                Box {
+                                    IconButton(
+                                        onClick = { menuExpanded = true }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.MoreVert,
+                                            contentDescription = "Sohbet Menüsü",
+                                            tint = Color.Gray
+                                        )
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = menuExpanded,
+                                        onDismissRequest = { menuExpanded = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Okundu Olarak İşaretle", fontSize = 13.sp) },
+                                            leadingIcon = {
+                                                Icon(Icons.Default.MarkEmailRead, contentDescription = null, tint = GreenPrimary)
+                                            },
+                                            onClick = {
+                                                menuExpanded = false
+                                                viewModel.markConversationAsRead(conversation.partnerId)
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Okunmadı Olarak İşaretle", fontSize = 13.sp) },
+                                            leadingIcon = {
+                                                Icon(Icons.Default.Email, contentDescription = null, tint = TextDark)
+                                            },
+                                            onClick = {
+                                                menuExpanded = false
+                                                viewModel.markConversationAsUnread(conversation.partnerId)
+                                            }
+                                        )
+                                        HorizontalDivider()
+                                        DropdownMenuItem(
+                                            text = { Text("Sohbeti Sil", color = Color(0xFFEF4444), fontSize = 13.sp) },
+                                            leadingIcon = {
+                                                Icon(Icons.Default.Delete, contentDescription = null, tint = Color(0xFFEF4444))
+                                            },
+                                            onClick = {
+                                                menuExpanded = false
+                                                viewModel.hideConversation(conversation.partnerId)
+                                            }
+                                        )
                                     }
                                 }
                             }
