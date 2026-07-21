@@ -59,6 +59,8 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
         private set
     var availableSlots by mutableStateOf<List<DietitianAvailability>>(emptyList())
         private set
+    var searchedSlots by mutableStateOf<List<DietitianAvailability>>(emptyList())
+        private set
     var cohortsData by mutableStateOf<List<CohortDto>>(emptyList())
         private set
     var complianceData by mutableStateOf<List<CategoryComplianceDto>>(emptyList())
@@ -318,6 +320,19 @@ class HomeViewModel(private val apiService: ApiService) : ViewModel() {
                 availableSlots = apiService.getAvailableSlots(dietitianId, date)
             } catch (e: Exception) {
                 _uiEvent.emit(HomeUiEvent.Error("Müsait saatler yüklenemedi: ${e.localizedMessage}"))
+            }
+        }
+    }
+
+    fun searchAvailableSlotsInRange(dietitianId: Long, startDate: String, endDate: String) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                searchedSlots = apiService.getAvailableSlotsInRange(dietitianId, startDate, endDate)
+            } catch (e: Exception) {
+                _uiEvent.emit(HomeUiEvent.Error("Arama hatası: ${e.localizedMessage}"))
+            } finally {
+                isLoading = false
             }
         }
     }

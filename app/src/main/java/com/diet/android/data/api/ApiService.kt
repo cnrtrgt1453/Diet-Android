@@ -138,6 +138,13 @@ interface ApiService {
         @Query("date") date: String
     ): List<DietitianAvailability>
 
+    @GET("api/v1/appointments/availability/dietitian/{dietitianId}/range")
+    suspend fun getAvailableSlotsInRange(
+        @Path("dietitianId") dietitianId: Long,
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String
+    ): List<DietitianAvailability>
+
     @POST("api/v1/appointments/availability")
     suspend fun createAvailabilitySlot(@Body slot: DietitianAvailability): DietitianAvailability
 

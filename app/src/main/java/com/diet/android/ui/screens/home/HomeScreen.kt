@@ -31,18 +31,18 @@ fun HomeScreen(
     onNavigateToAnalytics: () -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToNotifications: () -> Unit,
+    onNavigateToAppointmentBooking: () -> Unit,
     viewModel: HomeViewModel,
     initialDialog: String? = null
 ) {
     val context = LocalContext.current
     val userInfo = viewModel.userInfo
 
-    var showAppointmentDialog by remember { mutableStateOf(false) }
     var showApplicationsDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(initialDialog) {
         when (initialDialog) {
-            "appointment" -> showAppointmentDialog = true
+            "appointment" -> onNavigateToAppointmentBooking()
             "analytics" -> onNavigateToAnalytics()
             "applications" -> showApplicationsDialog = true
             "profile" -> onNavigateToProfile()
@@ -195,7 +195,7 @@ fun HomeScreen(
                         icon = { Icon(Icons.Default.AddCircle, contentDescription = "Randevu Al") },
                         label = { Text("Randevu Al", fontWeight = FontWeight.Medium) },
                         selected = false,
-                        onClick = { showAppointmentDialog = true }
+                        onClick = onNavigateToAppointmentBooking
                     )
                     // Mesajlarım
                     NavigationBarItem(
@@ -289,11 +289,7 @@ fun HomeScreen(
             }
 
             // Dialogs
-            AppointmentDialog(
-                visible = showAppointmentDialog,
-                onClose = { showAppointmentDialog = false },
-                viewModel = viewModel
-            )
+
 
 
             DietitianApplicationsDialog(

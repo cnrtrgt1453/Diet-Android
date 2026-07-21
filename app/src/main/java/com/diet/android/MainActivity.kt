@@ -20,6 +20,7 @@ import com.diet.android.data.repository.AuthRepository
 import com.diet.android.ui.screens.home.HomeScreen
 import com.diet.android.ui.screens.home.AvailabilitySlotsScreen
 import com.diet.android.ui.screens.home.AnalyticsScreen
+import com.diet.android.ui.screens.home.AppointmentBookingScreen
 import com.diet.android.ui.screens.home.DietitianMessagesScreen
 import com.diet.android.ui.screens.home.NotificationsScreen
 import com.diet.android.ui.screens.home.HomeViewModel
@@ -175,6 +176,11 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 HomeScreen(
                     viewModel = homeViewModel,
                     initialDialog = dialog,
+                    onNavigateToAppointmentBooking = {
+                        navController.navigate("appointment_booking") {
+                            launchSingleTop = true
+                        }
+                    },
                     onLogout = {
                         ApiClient.clearToken(navController.context)
                         navController.navigate("login") {
@@ -217,10 +223,16 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 ExploreScreen(
                     viewModel = exploreViewModel,
                     onNavigateToHome = { dialog ->
-                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
-                        navController.navigate(route) {
-                            popUpTo("home") { inclusive = false }
-                            launchSingleTop = true
+                        if (dialog == "appointment") {
+                            navController.navigate("appointment_booking") {
+                                launchSingleTop = true
+                            }
+                        } else {
+                            val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                            navController.navigate(route) {
+                                popUpTo("home") { inclusive = false }
+                                launchSingleTop = true
+                            }
                         }
                     },
                     onNavigateToSlots = {
@@ -249,10 +261,16 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 DietitianMessagesScreen(
                     viewModel = exploreViewModel,
                     onNavigateToHome = { dialog ->
-                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
-                        navController.navigate(route) {
-                            popUpTo("home") { inclusive = false }
-                            launchSingleTop = true
+                        if (dialog == "appointment") {
+                            navController.navigate("appointment_booking") {
+                                launchSingleTop = true
+                            }
+                        } else {
+                            val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                            navController.navigate(route) {
+                                popUpTo("home") { inclusive = false }
+                                launchSingleTop = true
+                            }
                         }
                     },
                     onNavigateToExplore = {
@@ -281,10 +299,16 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 AvailabilitySlotsScreen(
                     viewModel = homeViewModel,
                     onNavigateToHome = { dialog ->
-                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
-                        navController.navigate(route) {
-                            popUpTo("home") { inclusive = false }
-                            launchSingleTop = true
+                        if (dialog == "appointment") {
+                            navController.navigate("appointment_booking") {
+                                launchSingleTop = true
+                            }
+                        } else {
+                            val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                            navController.navigate(route) {
+                                popUpTo("home") { inclusive = false }
+                                launchSingleTop = true
+                            }
                         }
                     },
                     onNavigateToExplore = {
@@ -313,10 +337,16 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 AnalyticsScreen(
                     viewModel = homeViewModel,
                     onNavigateToHome = { dialog ->
-                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
-                        navController.navigate(route) {
-                            popUpTo("home") { inclusive = false }
-                            launchSingleTop = true
+                        if (dialog == "appointment") {
+                            navController.navigate("appointment_booking") {
+                                launchSingleTop = true
+                            }
+                        } else {
+                            val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                            navController.navigate(route) {
+                                popUpTo("home") { inclusive = false }
+                                launchSingleTop = true
+                            }
                         }
                     },
                     onNavigateToExplore = {
@@ -345,10 +375,16 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 ProfileScreen(
                     viewModel = homeViewModel,
                     onNavigateToHome = { dialog ->
-                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
-                        navController.navigate(route) {
-                            popUpTo("home") { inclusive = false }
-                            launchSingleTop = true
+                        if (dialog == "appointment") {
+                            navController.navigate("appointment_booking") {
+                                launchSingleTop = true
+                            }
+                        } else {
+                            val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                            navController.navigate(route) {
+                                popUpTo("home") { inclusive = false }
+                                launchSingleTop = true
+                            }
                         }
                     },
                     onNavigateToExplore = {
@@ -388,6 +424,33 @@ fun AppNavigation(authRepository: AuthRepository, apiService: ApiService) {
                 ProfileEditScreen(
                     viewModel = homeViewModel,
                     onNavigateBack = { navController.popBackStack() }
+                )
+            }
+            composable("appointment_booking") {
+                AppointmentBookingScreen(
+                    viewModel = homeViewModel,
+                    onNavigateToHome = { dialog ->
+                        val route = if (dialog != null) "home?dialog=$dialog" else "home"
+                        navController.navigate(route) {
+                            popUpTo("home") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToExplore = {
+                        navController.navigate("explore") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToMessages = {
+                        navController.navigate("messages") {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToProfile = {
+                        navController.navigate("profile") {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
             composable("notifications") {
