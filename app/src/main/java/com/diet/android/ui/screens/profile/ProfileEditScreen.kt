@@ -41,6 +41,8 @@ fun ProfileEditScreen(
     val context = LocalContext.current
     val user = viewModel.userInfo ?: return
 
+    val isDietitian = user.role == "ROLE_DIETITIAN"
+
     var name by remember { mutableStateOf(user.name ?: "") }
     var notes by remember { mutableStateOf(user.notes ?: "") }
     var instagramUrl by remember { mutableStateOf(user.instagramUrl ?: "") }
@@ -48,6 +50,14 @@ fun ProfileEditScreen(
     var youtubeUrl by remember { mutableStateOf(user.youtubeUrl ?: "") }
     var xUrl by remember { mutableStateOf(user.xUrl ?: "") }
     var facebookUrl by remember { mutableStateOf(user.facebookUrl ?: "") }
+
+    // Client fields
+    var height by remember { mutableStateOf(user.height?.toString() ?: "") }
+    var currentWeight by remember { mutableStateOf(user.currentWeight?.toString() ?: "") }
+    var targetWeight by remember { mutableStateOf(user.targetWeight?.toString() ?: "") }
+    var category by remember { mutableStateOf(user.category ?: "WEIGHT_MANAGEMENT") }
+    var glp1InjectionDay by remember { mutableStateOf(user.glp1InjectionDay ?: "") }
+    var glp1Dosage by remember { mutableStateOf(user.glp1Dosage ?: "") }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -158,7 +168,7 @@ fun ProfileEditScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Text(
-                            text = "Kişisel Bilgiler",
+                            text = if (isDietitian) "Kişisel Bilgiler" else "Profil Bilgileri",
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
                             color = GreenPrimary
@@ -172,62 +182,146 @@ fun ProfileEditScreen(
                             singleLine = true
                         )
 
-                        OutlinedTextField(
-                            value = notes,
-                            onValueChange = { notes = it },
-                            label = { Text("Hakkımda / Özgeçmiş Açıklaması") },
-                            modifier = Modifier.fillMaxWidth(),
-                            maxLines = 5,
-                            minLines = 3
-                        )
+                        if (isDietitian) {
+                            OutlinedTextField(
+                                value = notes,
+                                onValueChange = { notes = it },
+                                label = { Text("Hakkımda / Özgeçmiş Açıklaması") },
+                                modifier = Modifier.fillMaxWidth(),
+                                maxLines = 5,
+                                minLines = 3
+                            )
 
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Sosyal Medya Linkleri",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            color = GreenPrimary
-                        )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Sosyal Medya Linkleri",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
+                                color = GreenPrimary
+                            )
 
-                        OutlinedTextField(
-                            value = linkedinUrl,
-                            onValueChange = { linkedinUrl = it },
-                            label = { Text("LinkedIn Profil Linki") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true
-                        )
+                            OutlinedTextField(
+                                value = linkedinUrl,
+                                onValueChange = { linkedinUrl = it },
+                                label = { Text("LinkedIn Profil Linki") },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true
+                            )
 
-                        OutlinedTextField(
-                            value = instagramUrl,
-                            onValueChange = { instagramUrl = it },
-                            label = { Text("Instagram Profil Linki") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true
-                        )
+                            OutlinedTextField(
+                                value = instagramUrl,
+                                onValueChange = { instagramUrl = it },
+                                label = { Text("Instagram Profil Linki") },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true
+                            )
 
-                        OutlinedTextField(
-                            value = youtubeUrl,
-                            onValueChange = { youtubeUrl = it },
-                            label = { Text("YouTube Kanal Linki") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true
-                        )
+                            OutlinedTextField(
+                                value = youtubeUrl,
+                                onValueChange = { youtubeUrl = it },
+                                label = { Text("YouTube Kanal Linki") },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true
+                            )
 
-                        OutlinedTextField(
-                            value = xUrl,
-                            onValueChange = { xUrl = it },
-                            label = { Text("X (Twitter) Profil Linki") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true
-                        )
+                            OutlinedTextField(
+                                value = xUrl,
+                                onValueChange = { xUrl = it },
+                                label = { Text("X (Twitter) Profil Linki") },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true
+                            )
 
-                        OutlinedTextField(
-                            value = facebookUrl,
-                            onValueChange = { facebookUrl = it },
-                            label = { Text("Facebook Profil Linki") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true
-                        )
+                            OutlinedTextField(
+                                value = facebookUrl,
+                                onValueChange = { facebookUrl = it },
+                                label = { Text("Facebook Profil Linki") },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true
+                            )
+                        } else {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = height,
+                                    onValueChange = { height = it },
+                                    label = { Text("Boy (cm)") },
+                                    modifier = Modifier.weight(1f),
+                                    singleLine = true
+                                )
+                                OutlinedTextField(
+                                    value = currentWeight,
+                                    onValueChange = { currentWeight = it },
+                                    label = { Text("Kilo (kg)") },
+                                    modifier = Modifier.weight(1f),
+                                    singleLine = true
+                                )
+                                OutlinedTextField(
+                                    value = targetWeight,
+                                    onValueChange = { targetWeight = it },
+                                    label = { Text("Hedef (kg)") },
+                                    modifier = Modifier.weight(1f),
+                                    singleLine = true
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Klinik Program Türü",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
+                                color = GreenPrimary
+                            )
+
+                            val categories = listOf("WEIGHT_MANAGEMENT", "GLP_1", "LIPEDEMA", "HORMONAL_BALANCE")
+                            categories.forEach { cat ->
+                                val isSelected = category == cat
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable { category = cat }
+                                        .padding(vertical = 4.dp)
+                                ) {
+                                    RadioButton(selected = isSelected, onClick = { category = cat })
+                                    Text(
+                                        text = when (cat) {
+                                            "GLP_1" -> "GLP-1 Takip"
+                                            "LIPEDEMA" -> "Lipödem Diyeti"
+                                            "HORMONAL_BALANCE" -> "Hormonal Denge"
+                                            else -> "Kilo Yönetimi"
+                                        },
+                                        color = TextDark,
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
+
+                            if (category == "GLP_1") {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    OutlinedTextField(
+                                        value = glp1InjectionDay,
+                                        onValueChange = { glp1InjectionDay = it },
+                                        label = { Text("Enjeksiyon Günü") },
+                                        modifier = Modifier.weight(1f),
+                                        singleLine = true
+                                    )
+                                    OutlinedTextField(
+                                        value = glp1Dosage,
+                                        onValueChange = { glp1Dosage = it },
+                                        label = { Text("Dozaj (mg)") },
+                                        modifier = Modifier.weight(1f),
+                                        singleLine = true
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -239,19 +333,19 @@ fun ProfileEditScreen(
                         if (name.isNotBlank()) {
                             viewModel.updateProfileDetails(
                                 name = name,
-                                notes = notes.ifEmpty { null },
-                                instagramUrl = instagramUrl.ifEmpty { null },
-                                linkedinUrl = linkedinUrl.ifEmpty { null },
-                                youtubeUrl = youtubeUrl.ifEmpty { null },
-                                xUrl = xUrl.ifEmpty { null },
-                                facebookUrl = facebookUrl.ifEmpty { null },
+                                notes = if (isDietitian) notes.ifEmpty { null } else null,
+                                instagramUrl = if (isDietitian) instagramUrl.ifEmpty { null } else null,
+                                linkedinUrl = if (isDietitian) linkedinUrl.ifEmpty { null } else null,
+                                youtubeUrl = if (isDietitian) youtubeUrl.ifEmpty { null } else null,
+                                xUrl = if (isDietitian) xUrl.ifEmpty { null } else null,
+                                facebookUrl = if (isDietitian) facebookUrl.ifEmpty { null } else null,
                                 profilePictureUrl = user.profilePictureUrl, // keep existing URL, as photo was already uploaded & set separately
-                                height = user.height,
-                                currentWeight = user.currentWeight,
-                                targetWeight = user.targetWeight,
-                                category = user.category,
-                                glp1InjectionDay = user.glp1InjectionDay,
-                                glp1Dosage = user.glp1Dosage
+                                height = if (isDietitian) user.height else height.toDoubleOrNull(),
+                                currentWeight = if (isDietitian) user.currentWeight else currentWeight.toDoubleOrNull(),
+                                targetWeight = if (isDietitian) user.targetWeight else targetWeight.toDoubleOrNull(),
+                                category = if (isDietitian) user.category else category,
+                                glp1InjectionDay = if (isDietitian) user.glp1InjectionDay else if (category == "GLP_1") glp1InjectionDay.ifEmpty { null } else null,
+                                glp1Dosage = if (isDietitian) user.glp1Dosage else if (category == "GLP_1") glp1Dosage.ifEmpty { null } else null
                             )
                             onNavigateBack()
                         } else {

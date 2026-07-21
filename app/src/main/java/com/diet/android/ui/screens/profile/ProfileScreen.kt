@@ -139,6 +139,48 @@ fun ProfileScreen(
                         selected = false,
                         onClick = onNavigateToAnalytics
                     )
+                } else if (userInfo.role == "ROLE_USER") {
+                    // Geçmişim
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.History, contentDescription = "Geçmişim") },
+                        label = { Text("Geçmişim", fontWeight = FontWeight.Medium, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1) },
+                        selected = false,
+                        onClick = onNavigateToExplore
+                    )
+                    // Randevu Al
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.AddCircle, contentDescription = "Randevu Al") },
+                        label = { Text("Randevu Al", fontWeight = FontWeight.Medium, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1) },
+                        selected = false,
+                        onClick = { onNavigateToHome("appointment") }
+                    )
+                    // Mesajlar
+                    NavigationBarItem(
+                        icon = {
+                            Box(contentAlignment = Alignment.TopEnd) {
+                                Icon(Icons.Default.Email, contentDescription = "Mesajlar")
+                                if (viewModel.unreadMessagesCount > 0) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .offset(x = 6.dp, y = (-4).dp)
+                                            .background(MaterialTheme.colorScheme.error, RoundedCornerShape(8.dp)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = viewModel.unreadMessagesCount.toString(),
+                                            color = MaterialTheme.colorScheme.onError,
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+                        },
+                        label = { Text("Mesajlar", fontWeight = FontWeight.Medium, textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1) },
+                        selected = false,
+                        onClick = onNavigateToMessages
+                    )
                 }
 
                 // Profil (Seçili)
@@ -195,87 +237,221 @@ fun ProfileScreen(
                     textAlign = TextAlign.Center
                 )
 
-                // Social Media Row
-                val socialMedia = listOf(
-                    Triple(userInfo.linkedinUrl, R.drawable.ic_linkedin, "LinkedIn"),
-                    Triple(userInfo.instagramUrl, R.drawable.ic_instagram, "Instagram"),
-                    Triple(userInfo.youtubeUrl, R.drawable.ic_youtube, "YouTube"),
-                    Triple(userInfo.xUrl, R.drawable.ic_x, "X"),
-                    Triple(userInfo.facebookUrl, R.drawable.ic_facebook, "Facebook")
-                )
-
-                // Show only configured URLs
-                val activeSocials = socialMedia.filter { !it.first.isNullOrBlank() }
-
-                if (activeSocials.isNotEmpty()) {
-                    val greenGradient = androidx.compose.ui.graphics.Brush.linearGradient(
-                        colors = listOf(Color(0xFF34D399), Color(0xFF10B981))
-                    )
-
+                if (userInfo.role == "ROLE_USER") {
                     Spacer(modifier = Modifier.height(16.dp))
-                    Row(
+
+                    // Health Metrics Card
+                    Card(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
-                        activeSocials.forEach { (url, iconRes, desc) ->
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.width(60.dp)
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Sağlık Ölçümleri",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                color = GreenPrimary
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                IconButton(
-                                    onClick = { openUrl(url!!) },
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .shadow(4.dp, RoundedCornerShape(16.dp))
-                                        .background(greenGradient, shape = RoundedCornerShape(16.dp))
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = iconRes),
-                                        contentDescription = desc,
-                                        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
-                                        modifier = Modifier.size(24.dp)
-                                    )
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Boy", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text("${userInfo.height ?: 0.0} cm", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface)
                                 }
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Text(
-                                    text = desc,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                                    textAlign = TextAlign.Center,
-                                    maxLines = 1
-                                )
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Mevcut Kilo", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text("${userInfo.currentWeight ?: 0.0} kg", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("Hedef Kilo", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text("${userInfo.targetWeight ?: 0.0} kg", fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("VKI (BMI)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    val w = userInfo.currentWeight ?: 0.0
+                                    val h = userInfo.height ?: 0.0
+                                    val bmi = if (w > 0 && h > 0) String.format("%.1f", w / ((h / 100) * (h / 100))) else "-"
+                                    Text(bmi, fontWeight = FontWeight.SemiBold, fontSize = 15.sp, color = GreenPrimary)
+                                }
                             }
                         }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                // Description Card
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
+                    // Program Details Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
-                        Text(
-                            text = "Hakkımda / Özgeçmiş",
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 15.sp,
-                            color = GreenPrimary
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Text(
+                                text = "Klinik Program Detayları",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                color = GreenPrimary
+                            )
+                            
+                            val categoryName = when (userInfo.category) {
+                                "GLP_1" -> "GLP-1 Destekli Takip"
+                                "LIPEDEMA" -> "Lipödem Diyeti"
+                                "HORMONAL_BALANCE" -> "Hormonal Denge"
+                                else -> "Kilo Yönetimi"
+                            }
+                            
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text("Program Türü", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(categoryName, fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                            }
+
+                            if (userInfo.category == "GLP_1") {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Enjeksiyon Günü", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(userInfo.glp1InjectionDay ?: "-", fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Enjeksiyon Dozu", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(userInfo.glp1Dosage ?: "-", fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            } else if (userInfo.category == "LIPEDEMA") {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Lipödem Evresi", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text("Evre ${userInfo.lipedemaStage ?: 1}", fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Anti-inflamatuar Diyet", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(if (userInfo.antiInflammatoryCompliant == true) "Uyumlu" else "Uyumsuz", fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            } else if (userInfo.category == "HORMONAL_BALANCE") {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text("Hedef Döngü Fazı", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(userInfo.hormoneTargetCycle ?: "-", fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                                }
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text("E-posta Adresi", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(userInfo.email, fontWeight = FontWeight.Medium, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                            }
+                        }
+                    }
+                } else {
+                    // Social Media Row
+                    val socialMedia = listOf(
+                        Triple(userInfo.linkedinUrl, R.drawable.ic_linkedin, "LinkedIn"),
+                        Triple(userInfo.instagramUrl, R.drawable.ic_instagram, "Instagram"),
+                        Triple(userInfo.youtubeUrl, R.drawable.ic_youtube, "YouTube"),
+                        Triple(userInfo.xUrl, R.drawable.ic_x, "X"),
+                        Triple(userInfo.facebookUrl, R.drawable.ic_facebook, "Facebook")
+                    )
+
+                    // Show only configured URLs
+                    val activeSocials = socialMedia.filter { !it.first.isNullOrBlank() }
+
+                    if (activeSocials.isNotEmpty()) {
+                        val greenGradient = androidx.compose.ui.graphics.Brush.linearGradient(
+                            colors = listOf(Color(0xFF34D399), Color(0xFF10B981))
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = if (!userInfo.notes.isNullOrBlank()) userInfo.notes else "Henüz bir açıklama eklenmemiş.",
-                            fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                            lineHeight = 20.sp
-                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            activeSocials.forEach { (url, iconRes, desc) ->
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.width(60.dp)
+                                ) {
+                                    IconButton(
+                                        onClick = { openUrl(url!!) },
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .shadow(4.dp, RoundedCornerShape(16.dp))
+                                            .background(greenGradient, shape = RoundedCornerShape(16.dp))
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = iconRes),
+                                            contentDescription = desc,
+                                            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = desc,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // Description Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Hakkımda / Özgeçmiş",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp,
+                                color = GreenPrimary
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = if (!userInfo.notes.isNullOrBlank()) userInfo.notes else "Henüz bir açıklama eklenmemiş.",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                                lineHeight = 20.sp
+                            )
+                        }
                     }
                 }
 

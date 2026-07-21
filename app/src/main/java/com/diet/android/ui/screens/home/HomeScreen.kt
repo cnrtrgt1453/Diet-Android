@@ -39,14 +39,13 @@ fun HomeScreen(
 
     var showAppointmentDialog by remember { mutableStateOf(false) }
     var showApplicationsDialog by remember { mutableStateOf(false) }
-    var showProfileEditDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(initialDialog) {
         when (initialDialog) {
             "appointment" -> showAppointmentDialog = true
             "analytics" -> onNavigateToAnalytics()
             "applications" -> showApplicationsDialog = true
-            "profile" -> showProfileEditDialog = true
+            "profile" -> onNavigateToProfile()
         }
     }
 
@@ -240,13 +239,7 @@ fun HomeScreen(
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profil") },
                     label = { Text("Profil", fontWeight = FontWeight.Medium) },
                     selected = false,
-                    onClick = {
-                        if (userInfo?.role == "ROLE_DIETITIAN") {
-                            onNavigateToProfile()
-                        } else {
-                            showProfileEditDialog = true
-                        }
-                    }
+                    onClick = onNavigateToProfile
                 )
             }
         }
@@ -310,12 +303,7 @@ fun HomeScreen(
             )
 
 
-            ProfileEditDialog(
-                visible = showProfileEditDialog,
-                onClose = { showProfileEditDialog = false },
-                viewModel = viewModel,
-                onLogout = onLogout
-            )
+
         }
     }
 }

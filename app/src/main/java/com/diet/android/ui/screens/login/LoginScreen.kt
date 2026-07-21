@@ -2,9 +2,12 @@ package com.diet.android.ui.screens.login
 
 import android.content.Context
 import androidx.compose.animation.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.res.painterResource
+import com.diet.android.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -216,16 +219,13 @@ fun LogoSection(small: Boolean = false) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(bottom = if (small) 16.dp else 40.dp)
     ) {
-        Box(
+        Image(
+            painter = painterResource(id = R.drawable.ic_app_logo),
+            contentDescription = "App Logo",
             modifier = Modifier
                 .size(if (small) 60.dp else 90.dp)
                 .clip(CircleShape)
-                .background(Color.White)
-                .padding(if (small) 12.dp else 16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "🥗", fontSize = if (small) 28.sp else 40.sp)
-        }
+        )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = "DietApp",
