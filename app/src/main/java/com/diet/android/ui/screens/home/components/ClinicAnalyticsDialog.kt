@@ -86,10 +86,10 @@ fun ClinicAnalyticsDialog(
                         // Rows
                         cohorts.forEach { c ->
                             Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                                Text(c.cohortMonth, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = TextDark, modifier = Modifier.weight(1f))
-                                Text(String.format("%.1f kg", c.averageStartingWeight), fontSize = 12.sp, color = TextDark, modifier = Modifier.width(65.dp))
-                                Text(String.format("%.1f kg", c.averageCurrentWeight), fontSize = 12.sp, color = TextDark, modifier = Modifier.width(65.dp))
-                                Text(String.format("-%.1f kg", c.averageWeightLoss), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32), modifier = Modifier.width(65.dp))
+                                Text(c.cohortMonth ?: "-", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = TextDark, modifier = Modifier.weight(1f))
+                                Text(String.format("%.1f kg", c.averageStartingWeight ?: 0.0), fontSize = 12.sp, color = TextDark, modifier = Modifier.width(65.dp))
+                                Text(String.format("%.1f kg", c.averageCurrentWeight ?: 0.0), fontSize = 12.sp, color = TextDark, modifier = Modifier.width(65.dp))
+                                Text(String.format("-%.1f kg", c.averageWeightLoss ?: 0.0), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32), modifier = Modifier.width(65.dp))
                             }
                         }
                     }
@@ -112,7 +112,7 @@ fun ClinicAnalyticsDialog(
                 } else {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                         compliance.forEach { item ->
-                            val complianceVal = item.complianceRate
+                            val complianceVal = item.complianceRate ?: 0.0
                             val barColor = when {
                                 complianceVal >= 80 -> Color(0xFF2E7D32)
                                 complianceVal >= 50 -> Color(0xFFF9A825)
@@ -135,7 +135,7 @@ fun ClinicAnalyticsDialog(
                                         color = TextDark
                                     )
                                     Text(
-                                        text = String.format("%%.0f Uyum", complianceVal),
+                                        text = String.format("%.0f%% Uyum", complianceVal),
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = barColor
@@ -191,7 +191,7 @@ fun ClinicAnalyticsDialog(
                         // Rows
                         rates.forEach { r ->
                             Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                                Text(r.clientName, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = TextDark, modifier = Modifier.weight(1.2f))
+                                Text(r.clientName ?: "Danışan", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = TextDark, modifier = Modifier.weight(1.2f))
                                 Text(
                                     text = when (r.category) {
                                         "GLP_1" -> "GLP-1"
@@ -204,7 +204,7 @@ fun ClinicAnalyticsDialog(
                                     modifier = Modifier.weight(1f)
                                 )
                                 Text(
-                                    text = String.format("%.2f kg/h", r.weightLossRateKgPerWeek),
+                                    text = String.format("%.2f kg/h", r.weightLossRateKgPerWeek ?: 0.0),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFF2E7D32),

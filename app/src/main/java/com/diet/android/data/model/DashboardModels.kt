@@ -175,24 +175,24 @@ data class DietitianApplicationReviewDto(
 )
 
 data class CohortDto(
-    val cohortMonth: String,
-    val totalClients: Long,
-    val averageStartingWeight: Double,
-    val averageCurrentWeight: Double,
-    val averageWeightLoss: Double
+    val cohortMonth: String? = null,
+    val totalClients: Long? = 0,
+    val averageStartingWeight: Double? = 0.0,
+    val averageCurrentWeight: Double? = 0.0,
+    val averageWeightLoss: Double? = 0.0
 )
 
 data class CategoryComplianceDto(
-    val category: String,
-    val complianceRate: Double
+    val category: String? = null,
+    val complianceRate: Double? = 0.0
 )
 
 data class ClientWeightLossRateDto(
-    val clientName: String,
-    val category: String,
-    val startingWeight: Double,
-    val currentWeight: Double,
-    val weightLossRateKgPerWeek: Double,
-    val daysTracked: Long
+    val clientName: String? = null,
+    val category: String? = null,
+    val startingWeight: Double? = 0.0,
+    val currentWeight: Double? = 0.0,
+    val weightLossRateKgPerWeek: Double? = 0.0,
+    val daysTracked: Long? = 0
 )
 

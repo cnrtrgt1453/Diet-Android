@@ -222,26 +222,26 @@ fun AnalyticsScreen(
                                             .padding(vertical = 6.dp)
                                     ) {
                                         Text(
-                                            text = c.cohortMonth,
+                                            text = c.cohortMonth ?: "-",
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextDark,
                                             modifier = Modifier.weight(1f)
                                         )
                                         Text(
-                                            text = String.format("%.1f kg", c.averageStartingWeight),
+                                            text = String.format("%.1f kg", c.averageStartingWeight ?: 0.0),
                                             fontSize = 13.sp,
                                             color = TextDark,
                                             modifier = Modifier.width(70.dp)
                                         )
                                         Text(
-                                            text = String.format("%.1f kg", c.averageCurrentWeight),
+                                            text = String.format("%.1f kg", c.averageCurrentWeight ?: 0.0),
                                             fontSize = 13.sp,
                                             color = TextDark,
                                             modifier = Modifier.width(70.dp)
                                         )
                                         Text(
-                                            text = String.format("-%.1f kg", c.averageWeightLoss),
+                                            text = String.format("-%.1f kg", c.averageWeightLoss ?: 0.0),
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color(0xFF2E7D32),
@@ -282,7 +282,7 @@ fun AnalyticsScreen(
                         } else {
                             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                                 compliance.forEach { item ->
-                                    val complianceVal = item.complianceRate
+                                    val complianceVal = item.complianceRate ?: 0.0
                                     val barColor = when {
                                         complianceVal >= 80 -> Color(0xFF2E7D32)
                                         complianceVal >= 50 -> Color(0xFFF9A825)
@@ -305,7 +305,7 @@ fun AnalyticsScreen(
                                                 color = TextDark
                                             )
                                             Text(
-                                                text = String.format("%%.0f Uyum", complianceVal),
+                                                text = String.format("%.0f%% Uyum", complianceVal),
                                                 fontSize = 13.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = barColor
@@ -401,7 +401,7 @@ fun AnalyticsScreen(
                                             .padding(vertical = 6.dp)
                                     ) {
                                         Text(
-                                            text = r.clientName,
+                                            text = r.clientName ?: "Danışan",
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.SemiBold,
                                             color = TextDark,
@@ -419,7 +419,7 @@ fun AnalyticsScreen(
                                             modifier = Modifier.weight(1f)
                                         )
                                         Text(
-                                            text = String.format("%.2f kg/h", r.weightLossRateKgPerWeek),
+                                            text = String.format("%.2f kg/h", r.weightLossRateKgPerWeek ?: 0.0),
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = Color(0xFF2E7D32),
